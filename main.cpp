@@ -6,7 +6,8 @@
 
 
 int main() {
-    bigfloat a;
-    std::cout << 1 << std::endl;
+    std::string b = "-123";
+    auto a = new bigfloat(b);
+    std::cout << a->toString() << std::endl;
     return 0;
 }
