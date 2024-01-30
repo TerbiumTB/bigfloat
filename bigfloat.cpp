@@ -3,6 +3,7 @@
 #define BASE 1e9
 #define CAPACITY 10
 
+
 bigfloat::bigfloat() {
     _signum = false;
     _exponent = 1;
@@ -36,20 +37,22 @@ bigfloat::bigfloat(std::string input) {
 
     } else{
         _exponent = input.find(separator);
-        input.erase(input.begin() + _exponent);
+        if (_exponent == -1){
+            _exponent = input.length();
+        } else{
+            input.erase(input.begin() + _exponent);
+        }
+
     }
 
 
-    int accum = 0;
+    digit_t accum = 0;
     int counter = 0;
 
     for(char digit : input){
         if (counter < CAPACITY){
             add_digit(accum, digit);
             counter++;
-//            if (accum == 0){
-//                _mantissa.push_back(accum);
-//            }
         } else{
             _mantissa.push_back(accum);
             accum = to_digit(digit);
@@ -62,11 +65,9 @@ bigfloat::bigfloat(std::string input) {
         counter++;
     }
     _mantissa.push_back(accum);
-    discard_zeros();
-
 }
 
-void bigfloat::add_digit(int& x, char digit) {
+void bigfloat::add_digit(digit_t & x, char digit) {
     x = 10*x + to_digit(digit);
 }
 
@@ -74,23 +75,17 @@ int bigfloat::to_digit(char digit) {
     return digit - '0';
 }
 
-std::string bigfloat::num2string(unsigned n) {
+std::string bigfloat::num2string(digit_t n) {
     std::ostringstream stm;
-    stm << n << "{:010}";
-    return stm.str();
-//    std::formatter();
-//format()
+    stm << n;
+    std::string format(CAPACITY - stm.str().length(), '0');
+    return format + stm.str();
 }
-
-//int bigfloat::scale(int x) {
-//    return ceil(log10(x + (x % 10 == 0)));
-//}
-
 
 std::string bigfloat::to_string() {
     std::string number;
 
-    for (unsigned digits : _mantissa){
+    for (digit_t digits : _mantissa){
         number += num2string(digits);
     }
 
@@ -125,7 +120,9 @@ bigfloat bigfloat::operator-() {
     return *this;
 }
 
+void bigfloat::operator+=(const bigfloat &) {
 
+}
 //bigfloat bigfloat::operator+(bigfloat x) {
 //    unsigned carry;
 //

@@ -1,8 +1,9 @@
 {
+	"archive" : {},
 	"artifacts" : 
 	[
 		{
-			"path" : "very_long_float"
+			"path" : "libbigfloat.a"
 		}
 	],
 	"backtrace" : 1,
@@ -10,7 +11,7 @@
 	{
 		"commands" : 
 		[
-			"add_executable"
+			"add_library"
 		],
 		"files" : 
 		[
@@ -49,29 +50,13 @@
 			},
 			"sourceIndexes" : 
 			[
-				0,
-				1
+				0
 			]
 		}
 	],
-	"id" : "very_long_float::@6890427a1f51a3e7e1df",
-	"link" : 
-	{
-		"commandFragments" : 
-		[
-			{
-				"fragment" : "-g",
-				"role" : "flags"
-			},
-			{
-				"fragment" : "",
-				"role" : "flags"
-			}
-		],
-		"language" : "CXX"
-	},
-	"name" : "very_long_float",
-	"nameOnDisk" : "very_long_float",
+	"id" : "bigfloat::@6890427a1f51a3e7e1df",
+	"name" : "bigfloat",
+	"nameOnDisk" : "libbigfloat.a",
 	"paths" : 
 	{
 		"build" : ".",
@@ -83,7 +68,13 @@
 			"name" : "Source Files",
 			"sourceIndexes" : 
 			[
-				0,
+				0
+			]
+		},
+		{
+			"name" : "Header Files",
+			"sourceIndexes" : 
+			[
 				1
 			]
 		}
@@ -93,15 +84,14 @@
 		{
 			"backtrace" : 1,
 			"compileGroupIndex" : 0,
-			"path" : "main.cpp",
+			"path" : "bigfloat.cpp",
 			"sourceGroupIndex" : 0
 		},
 		{
 			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "bigfloat.cpp",
-			"sourceGroupIndex" : 0
+			"path" : "bigfloat.h",
+			"sourceGroupIndex" : 1
 		}
 	],
-	"type" : "EXECUTABLE"
+	"type" : "STATIC_LIBRARY"
 }

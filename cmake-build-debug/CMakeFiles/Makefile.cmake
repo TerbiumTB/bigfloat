@@ -51,6 +51,6 @@ set(CMAKE_MAKEFILE_PRODUCTS
 
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
-  "CMakeFiles/very_long_float.dir/DependInfo.cmake"
-  "CMakeFiles/ver_lon_float.dir/DependInfo.cmake"
+  "CMakeFiles/bigfloat.dir/DependInfo.cmake"
+  "CMakeFiles/main.dir/DependInfo.cmake"
   )

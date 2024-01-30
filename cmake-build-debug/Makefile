@@ -117,38 +117,37 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named very_long_float
+# Target rules for targets named bigfloat
 
 # Build rule for target.
-very_long_float: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 very_long_float
-.PHONY : very_long_float
+bigfloat: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 bigfloat
+.PHONY : bigfloat
 
 # fast build rule for target.
-very_long_float/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/very_long_float.dir/build.make CMakeFiles/very_long_float.dir/build
-.PHONY : very_long_float/fast
+bigfloat/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/bigfloat.dir/build.make CMakeFiles/bigfloat.dir/build
+.PHONY : bigfloat/fast
 
 #=============================================================================
-# Target rules for targets named ver_lon_float
+# Target rules for targets named main
 
 # Build rule for target.
-ver_lon_float: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 ver_lon_float
-.PHONY : ver_lon_float
+main: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 main
+.PHONY : main
 
 # fast build rule for target.
-ver_lon_float/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ver_lon_float.dir/build.make CMakeFiles/ver_lon_float.dir/build
-.PHONY : ver_lon_float/fast
+main/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/build
+.PHONY : main/fast
 
 bigfloat.o: bigfloat.cpp.o
 .PHONY : bigfloat.o
 
 # target to build an object file
 bigfloat.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/very_long_float.dir/build.make CMakeFiles/very_long_float.dir/bigfloat.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ver_lon_float.dir/build.make CMakeFiles/ver_lon_float.dir/bigfloat.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/bigfloat.dir/build.make CMakeFiles/bigfloat.dir/bigfloat.cpp.o
 .PHONY : bigfloat.cpp.o
 
 bigfloat.i: bigfloat.cpp.i
@@ -156,8 +155,7 @@ bigfloat.i: bigfloat.cpp.i
 
 # target to preprocess a source file
 bigfloat.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/very_long_float.dir/build.make CMakeFiles/very_long_float.dir/bigfloat.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ver_lon_float.dir/build.make CMakeFiles/ver_lon_float.dir/bigfloat.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/bigfloat.dir/build.make CMakeFiles/bigfloat.dir/bigfloat.cpp.i
 .PHONY : bigfloat.cpp.i
 
 bigfloat.s: bigfloat.cpp.s
@@ -165,8 +163,7 @@ bigfloat.s: bigfloat.cpp.s
 
 # target to generate assembly for a file
 bigfloat.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/very_long_float.dir/build.make CMakeFiles/very_long_float.dir/bigfloat.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ver_lon_float.dir/build.make CMakeFiles/ver_lon_float.dir/bigfloat.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/bigfloat.dir/build.make CMakeFiles/bigfloat.dir/bigfloat.cpp.s
 .PHONY : bigfloat.cpp.s
 
 main.o: main.cpp.o
@@ -174,8 +171,7 @@ main.o: main.cpp.o
 
 # target to build an object file
 main.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/very_long_float.dir/build.make CMakeFiles/very_long_float.dir/main.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ver_lon_float.dir/build.make CMakeFiles/ver_lon_float.dir/main.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main.cpp.o
 .PHONY : main.cpp.o
 
 main.i: main.cpp.i
@@ -183,8 +179,7 @@ main.i: main.cpp.i
 
 # target to preprocess a source file
 main.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/very_long_float.dir/build.make CMakeFiles/very_long_float.dir/main.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ver_lon_float.dir/build.make CMakeFiles/ver_lon_float.dir/main.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main.cpp.i
 .PHONY : main.cpp.i
 
 main.s: main.cpp.s
@@ -192,8 +187,7 @@ main.s: main.cpp.s
 
 # target to generate assembly for a file
 main.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/very_long_float.dir/build.make CMakeFiles/very_long_float.dir/main.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ver_lon_float.dir/build.make CMakeFiles/ver_lon_float.dir/main.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main.cpp.s
 .PHONY : main.cpp.s
 
 # Help Target
@@ -204,8 +198,8 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
-	@echo "... ver_lon_float"
-	@echo "... very_long_float"
+	@echo "... bigfloat"
+	@echo "... main"
 	@echo "... bigfloat.o"
 	@echo "... bigfloat.i"
 	@echo "... bigfloat.s"

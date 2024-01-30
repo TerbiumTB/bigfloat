@@ -40,16 +40,16 @@
 			[
 				{
 					"directoryIndex" : 0,
-					"id" : "ver_lon_float::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-ver_lon_float-Debug-3e0a9a03532efc5d7829.json",
-					"name" : "ver_lon_float",
+					"id" : "bigfloat::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-bigfloat-Debug-3bcd88c494bf68ede825.json",
+					"name" : "bigfloat",
 					"projectIndex" : 0
 				},
 				{
 					"directoryIndex" : 0,
-					"id" : "very_long_float::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-very_long_float-Debug-fa5629f32546c54b9428.json",
-					"name" : "very_long_float",
+					"id" : "main::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-main-Debug-1202d9e227a424a73af1.json",
+					"name" : "main",
 					"projectIndex" : 0
 				}
 			]

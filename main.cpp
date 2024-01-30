@@ -17,10 +17,10 @@ bigfloat operator ""_bf(unsigned long long number) {
 }
 int main() {
 //    auto a = bigfloat("1.99999999999999999");
-//    auto b = bigfloat("12.0000000000000023000000000001");
+    auto b = bigfloat("121780000000000000000");
 //    auto c = a + b;
 //    std::cout << a.to_string() << std::endl;
-//    std::cout << b.to_string() << std::endl;
+    std::cout << b.to_string() << std::endl;
 //    std::cout << c.to_string() << std::endl;
 //    std::cout << (c & ~(0b111 << 27)) << std::endl;
     return 0;

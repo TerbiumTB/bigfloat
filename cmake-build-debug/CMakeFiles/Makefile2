@@ -63,8 +63,8 @@ CMAKE_BINARY_DIR = /Users/timofejbulgakov/CLionProjects/bigfloat/cmake-build-deb
 # Directory level rules for the build root directory
 
 # The main recursive "all" target.
-all: CMakeFiles/very_long_float.dir/all
-all: CMakeFiles/ver_lon_float.dir/all
+all: CMakeFiles/bigfloat.dir/all
+all: CMakeFiles/main.dir/all
 .PHONY : all
 
 # The main recursive "preinstall" target.
@@ -72,61 +72,61 @@ preinstall:
 .PHONY : preinstall
 
 # The main recursive "clean" target.
-clean: CMakeFiles/very_long_float.dir/clean
-clean: CMakeFiles/ver_lon_float.dir/clean
+clean: CMakeFiles/bigfloat.dir/clean
+clean: CMakeFiles/main.dir/clean
 .PHONY : clean
 
 #=============================================================================
-# Target rules for target CMakeFiles/very_long_float.dir
+# Target rules for target CMakeFiles/bigfloat.dir
 
 # All Build rule for target.
-CMakeFiles/very_long_float.dir/all:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/very_long_float.dir/build.make CMakeFiles/very_long_float.dir/depend
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/very_long_float.dir/build.make CMakeFiles/very_long_float.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/timofejbulgakov/CLionProjects/bigfloat/cmake-build-debug/CMakeFiles --progress-num=4,5,6 "Built target very_long_float"
-.PHONY : CMakeFiles/very_long_float.dir/all
+CMakeFiles/bigfloat.dir/all:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/bigfloat.dir/build.make CMakeFiles/bigfloat.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/bigfloat.dir/build.make CMakeFiles/bigfloat.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/timofejbulgakov/CLionProjects/bigfloat/cmake-build-debug/CMakeFiles --progress-num=1,2 "Built target bigfloat"
+.PHONY : CMakeFiles/bigfloat.dir/all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/very_long_float.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/timofejbulgakov/CLionProjects/bigfloat/cmake-build-debug/CMakeFiles 3
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/very_long_float.dir/all
+CMakeFiles/bigfloat.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/timofejbulgakov/CLionProjects/bigfloat/cmake-build-debug/CMakeFiles 2
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/bigfloat.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/timofejbulgakov/CLionProjects/bigfloat/cmake-build-debug/CMakeFiles 0
-.PHONY : CMakeFiles/very_long_float.dir/rule
+.PHONY : CMakeFiles/bigfloat.dir/rule
 
 # Convenience name for target.
-very_long_float: CMakeFiles/very_long_float.dir/rule
-.PHONY : very_long_float
+bigfloat: CMakeFiles/bigfloat.dir/rule
+.PHONY : bigfloat
 
 # clean rule for target.
-CMakeFiles/very_long_float.dir/clean:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/very_long_float.dir/build.make CMakeFiles/very_long_float.dir/clean
-.PHONY : CMakeFiles/very_long_float.dir/clean
+CMakeFiles/bigfloat.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/bigfloat.dir/build.make CMakeFiles/bigfloat.dir/clean
+.PHONY : CMakeFiles/bigfloat.dir/clean
 
 #=============================================================================
-# Target rules for target CMakeFiles/ver_lon_float.dir
+# Target rules for target CMakeFiles/main.dir
 
 # All Build rule for target.
-CMakeFiles/ver_lon_float.dir/all:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ver_lon_float.dir/build.make CMakeFiles/ver_lon_float.dir/depend
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ver_lon_float.dir/build.make CMakeFiles/ver_lon_float.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/timofejbulgakov/CLionProjects/bigfloat/cmake-build-debug/CMakeFiles --progress-num=1,2,3 "Built target ver_lon_float"
-.PHONY : CMakeFiles/ver_lon_float.dir/all
+CMakeFiles/main.dir/all: CMakeFiles/bigfloat.dir/all
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/timofejbulgakov/CLionProjects/bigfloat/cmake-build-debug/CMakeFiles --progress-num=3,4 "Built target main"
+.PHONY : CMakeFiles/main.dir/all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/ver_lon_float.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/timofejbulgakov/CLionProjects/bigfloat/cmake-build-debug/CMakeFiles 3
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/ver_lon_float.dir/all
+CMakeFiles/main.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/timofejbulgakov/CLionProjects/bigfloat/cmake-build-debug/CMakeFiles 4
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/main.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/timofejbulgakov/CLionProjects/bigfloat/cmake-build-debug/CMakeFiles 0
-.PHONY : CMakeFiles/ver_lon_float.dir/rule
+.PHONY : CMakeFiles/main.dir/rule
 
 # Convenience name for target.
-ver_lon_float: CMakeFiles/ver_lon_float.dir/rule
-.PHONY : ver_lon_float
+main: CMakeFiles/main.dir/rule
+.PHONY : main
 
 # clean rule for target.
-CMakeFiles/ver_lon_float.dir/clean:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ver_lon_float.dir/build.make CMakeFiles/ver_lon_float.dir/clean
-.PHONY : CMakeFiles/ver_lon_float.dir/clean
+CMakeFiles/main.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/clean
+.PHONY : CMakeFiles/main.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.

@@ -7,18 +7,19 @@
 #include <sstream>
 #include <format>
 
+typedef unsigned long long digit_t;
 class bigfloat {
 private:
-    std::vector<unsigned> _mantissa;
+    std::vector<digit_t> _mantissa;
     long _exponent;
     bool _signum;
     unsigned _precision;
 
-    static void add_digit(int &, char);
+    static void add_digit(digit_t &, char);
 
     static int to_digit(char);
 
-    static std::string num2string(unsigned);
+    static std::string num2string(digit_t);
 
     static unsigned scale(unsigned);
 
@@ -41,7 +42,9 @@ public:
 
 //    int operator[] (int) const;
 
+    void operator+=(const bigfloat&);
     bigfloat operator+(bigfloat);
+    bigfloat& operator++();
 
     std::strong_ordering operator<=>(bigfloat) const;
 
