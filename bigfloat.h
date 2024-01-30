@@ -5,9 +5,10 @@
 #include <vector>
 #include <ostream>
 #include <sstream>
+#include <cmath>
 
-#define BASE 1e9
-#define CAPACITY 10
+#define BASE (lli) 1e9
+#define CAPACITY 9
 #define mod(a, m) ((m - (a)%m)%m)
 typedef unsigned long long digit_t;
 typedef long long int lli;
@@ -16,7 +17,6 @@ typedef long long int lli;
 class bigfloat {
 private:
     std::vector<digit_t> _mantissa;
-    std::vector<digit_t> _integer;
     lli _exponent;
     bool _signum;
 
@@ -33,7 +33,8 @@ private:
     static std::string num2string(digit_t);
     static std::string fnum2string(digit_t);
 
-    static digit_t move_pos(digit_t&, unsigned);
+    digit_t operator[] (lli) const;
+    constexpr digit_t& operator[] (lli);
 
     void discard_zeros();
 
@@ -45,16 +46,27 @@ public:
 
     std::string to_string();
 
-    int sign();
-    int greatest();
-    int lowest();
+    int sign() const;
+    lli greatest() const;
+    lli lowest();
+
 
     bigfloat operator-();
 
-    digit_t operator[] (lli) const;
+    friend bigfloat operator-( bigfloat, bigfloat);
+
+    bigfloat& operator-=(bigfloat);
+
+    const bigfloat& operator--();
+    const bigfloat operator--(int);
 
 
     friend bigfloat operator+(bigfloat, bigfloat);
+
+    bigfloat& operator+=(bigfloat);
+
+    const bigfloat& operator++();
+    const bigfloat operator++(int);
 
 
     friend bool operator==(const bigfloat&, const bigfloat&);
@@ -63,6 +75,8 @@ public:
 
 };
 
+bigfloat operator ""_bf(long double);
 
+bigfloat operator ""_bf(unsigned long long);
 
 #endif //VERY_LONG_FLOAT_BIGFLOAT_H
