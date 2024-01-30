@@ -1,0 +1,2 @@
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ar qc libbigfloat.a CMakeFiles/bigfloat.dir/bigfloat.cpp.o
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ranlib libbigfloat.a
