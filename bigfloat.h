@@ -7,15 +7,21 @@
 #include <sstream>
 #include <cmath>
 
-#define BASE (lli) 1e9
+#define BASE (digit_t) 1e9
 #define CAPACITY 9
 #define mod(a, m) ((m - (a)%m)%m)
+
 typedef unsigned long long digit_t;
 typedef long long int lli;
 
+//16.18659547830967073703080
+//16.18659547830966513513861950
+//16,186595478309671
+//16,186595478309671
 
 class bigfloat {
 private:
+    static lli _precision;
     std::vector<digit_t> _mantissa;
     lli _exponent;
     bool _signum;
@@ -44,6 +50,14 @@ public:
 
     bigfloat(std::string);
 
+    static lli precision(lli);
+    static lli precision();
+    static bool valuable(lli);
+    static lli border();
+
+    lli accuracy();
+
+
     std::string to_string();
 
     int sign() const;
@@ -67,6 +81,9 @@ public:
 
     const bigfloat& operator++();
     const bigfloat operator++(int);
+
+    friend bigfloat operator*(bigfloat, bigfloat);
+    bigfloat& operator*=(bigfloat);
 
 
     friend bool operator==(const bigfloat&, const bigfloat&);

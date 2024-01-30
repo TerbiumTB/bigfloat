@@ -1,6 +1,20 @@
 #include "bigfloat.h"
 
+
 // static-------------------------------
+lli bigfloat::_precision = 25;
+
+lli bigfloat::precision() {
+    return _precision;
+}
+
+lli bigfloat::precision(lli p) {
+    if (p >= 0){
+        _precision = p;
+    }
+    return _precision;
+}
+
 digit_t bigfloat::to_digit(char digit) {
     return digit - '0';
 }
@@ -28,7 +42,7 @@ std::string bigfloat::fnum2string(digit_t n) {
 bigfloat::bigfloat() {
     _signum = false;
     _exponent = 0;
-    _mantissa = {0};
+    _mantissa.push_back(0);
 }
 
 bigfloat::bigfloat(std::string input) {
@@ -64,10 +78,14 @@ bigfloat::bigfloat(std::string input) {
 }
 
 bigfloat operator ""_bf(long double number) {
+    if (number == 0.0)
+        return {};
     return {std::to_string(number)};
 }
 
 bigfloat operator ""_bf(unsigned long long number) {
+    if (number == 0)
+        return {};
     return {std::to_string(number) + '.'};
 }
 //-------------------------------
@@ -99,6 +117,9 @@ std::string bigfloat::to_string() {
         if (i == 0){
             number += num2string(_mantissa[i]);
         }
+        if(i == ){
+
+        }
         else{
             number += fnum2string(_mantissa[i]);
         }
@@ -117,6 +138,9 @@ std::string bigfloat::to_string() {
 void bigfloat::discard_zeros() {
     while (_mantissa.back() == 0){
         _mantissa.pop_back();
+    }
+    while(_mantissa.front() == 0){
+        _mantissa.erase(_mantissa.begin());
     }
 }
 
@@ -198,6 +222,8 @@ bigfloat operator-(bigfloat a, bigfloat b){
         }
     }
 
+    a.discard_zeros();
+
     return a;
 }
 
@@ -231,6 +257,9 @@ bigfloat operator+(bigfloat a, bigfloat b){
             b[i+1]++;
         }
     }
+
+    a.discard_zeros();
+
     return a;
 }
 
@@ -247,3 +276,41 @@ const bigfloat bigfloat::operator++(int) {
     return (*this - 1_bf);
 }
 //-------------------------------
+
+//multiplication-------------------------------
+bigfloat operator*(bigfloat a, bigfloat b){
+    if (a==0_bf || b == 0_bf){
+        return 0_bf;
+    }
+    digit_t carry;
+    auto c = 0_bf;
+
+    for (auto i = (lli) fmin(a.lowest(), b.lowest()); i <= a.greatest(); ++i){
+        carry = 0;
+        for (auto j = (lli) fmin(a.lowest(), b.lowest()); j <= b.greatest()  || carry != 0; ++j){
+            auto x = c[i+j] + a[i]*b[j] + carry;
+            if (bigfloat::valuable(i + j))
+                c[i+j] = x%BASE;
+            carry = x/BASE;
+        }
+    }
+
+    c.discard_zeros();
+    c._signum = a._signum != b._signum;
+//    a._exponent += b._exponent;
+    c._exponent = (lli) c._mantissa.size() - (lli) fmin(a.accuracy() + b.accuracy(), bigfloat::border());
+    return c;
+}
+
+lli bigfloat::accuracy() {
+    return (lli) _mantissa.size() - _exponent;
+}
+
+bool bigfloat::valuable(lli index) {
+    return index >= 0 or (-index <= border());
+}
+
+lli bigfloat::border() {
+//    return (bigfloat::precision()/CAPACITY) + ((bigfloat::precision()%CAPACITY)!=0);
+    return (bigfloat::precision()/CAPACITY) + 1;
+}
