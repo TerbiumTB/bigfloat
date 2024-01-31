@@ -222,8 +222,9 @@ inline constexpr digit_t &bigfloat::operator[](lli index) {
 
 //subtraction-------------------------------
 bigfloat bigfloat::operator-() {
-    _signum = !_signum;
-    return *this;
+    auto inverse(*this);
+    inverse._signum = !_signum;
+    return inverse;
 }
 
 bigfloat operator-(bigfloat a, bigfloat b){
@@ -253,6 +254,8 @@ bigfloat operator-(bigfloat a, lli b){
     if (a[0] - b < 0){
         a[0] += BASE - b;
         a[1]--;
+    } else{
+        a[0] -= b;
     }
 
     a.discard_zeros();
