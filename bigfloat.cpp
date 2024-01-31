@@ -1,12 +1,50 @@
 #include "bigfloat.h"
 
-#define CAPACITY 100000000
-#define CAPACITY_LEN 8
+#include <utility>
 
+
+// static-------------------------------
+lli bigfloat::_precision = 25;
+
+lli bigfloat::precision() {
+    return _precision;
+}
+
+lli bigfloat::precision(lli p) {
+    if (p >= 0){
+        _precision = p;
+    }
+    return _precision;
+}
+
+digit_t bigfloat::to_digit(char digit) {
+    return digit - '0';
+}
+
+void bigfloat::add_digit(digit_t & x, char digit) {
+    x = 10*x + to_digit(digit);
+}
+
+std::string bigfloat::num2string(digit_t n) {
+    std::ostringstream stm;
+    stm << n;
+    return stm.str();
+}
+
+std::string bigfloat::fnum2string(digit_t n) {
+    std::ostringstream stm;
+    stm << n;
+    std::string format(CAPACITY - stm.str().length(), '0');
+    return format + stm.str();
+}
+//-------------------------------
+
+
+//constructors-------------------------------
 bigfloat::bigfloat() {
     _signum = false;
-    _exponent = 1;
-    _mantissa = {0};
+    _exponent = 0;
+    _mantissa.push_back(0);
 }
 
 bigfloat::bigfloat(std::string input) {
@@ -18,151 +56,366 @@ bigfloat::bigfloat(std::string input) {
         _signum = false;
     }
 
-    char separator = input.find('.') < std::string::npos ? '.' : ',';
 
-    _exponent = 0;
+    char separator = '.';
 
-    if (input[0] == '0'){
-        input.erase(input.begin()); // delete the leading zero
-        input.erase(input.begin()); // delete the sep
+    if(input.find('.') == std::string::npos){
+        if (input.find(',') < std::string::npos) separator = ',';
+        else input += '.';
+    }
 
-        while(input.front() == '0'){
-            input.erase(input.begin());
-            _exponent--;
+//    char separator = input.find('.') < std::string::npos ? '.' : ',';
+
+
+    input = input + std::string(mod(input.size() - input.find(separator) - 1, CAPACITY), '0');
+
+    auto y = mod(input.size() - 1, CAPACITY);
+    input = std::string(mod(input.size() - 1, CAPACITY), '0') + input;
+
+    _exponent = (lli) input.find(separator)/CAPACITY;
+    std::erase(input, separator);
+
+    digit_t accum = 0;
+    auto iter = input.begin();
+    while (iter != input.end()){
+        for(int i = 0; i < CAPACITY; ++i){
+            add_digit(accum, *iter);
+            iter++;
         }
-
-    } else{
-        _exponent = input.find(separator);
-        input.erase(input.begin() + _exponent);
+        _mantissa.push_back(accum);
+        accum = 0;
     }
-
-
-    for(char digit : input){
-        _mantissa.push_back(to_digit(digit));
-    }
-
     discard_zeros();
+
 }
 
-char bigfloat::to_digit(char digit) {
-    return digit - '0';
+bigfloat operator ""_bf(long double number) {
+    if (number == 0.0)
+        return {};
+    return {std::to_string(number)};
 }
 
+bigfloat operator ""_bf(unsigned long long number) {
+    if (number == 0)
+        return {};
+    return {std::to_string(number) + '.'};
+}
+//-------------------------------
+
+
+//properties-------------------------------
+int bigfloat::sign() const {
+    return _signum ? -1 : 1;
+}
+
+lli bigfloat::greatest() const {
+    return _exponent - 1;
+}
+
+lli bigfloat::lowest() {
+    return _exponent - (lli) _mantissa.size();
+}
+//-------------------------------
+
+
+//-------------------------------
 std::string bigfloat::to_string() {
-    std::string number;
+    std::string number = _signum ? "-" : "";
 
-    for (char digit : _mantissa){
-        number += digit + '0';
+    for (auto i = 0; i < _mantissa.size(); ++i){
+        if (i == _exponent)
+            number += '.';
+
+        if (i == 0){
+            number += num2string(_mantissa[i]);
+        }
+//        if(i == ){
+//
+//        }
+        else{
+            number += fnum2string(_mantissa[i]);
+        }
     }
 
-    if (_exponent > 0){
-        number.insert(_exponent, ".");
-    } else{
-        number.insert(number.begin(), -_exponent, '0');
-        number.insert(0, "0.");
+    number += '0';
+    while(number.back() == '0'){
+        number.pop_back();
     }
-
-
-    if (_signum){
-        return '-' + number + '0';
-    }
+    if(_mantissa.size() == _exponent)
+        number += '.';
 
     return number + '0';
 }
+//-------------------------------
+
 
 void bigfloat::discard_zeros() {
     while (_mantissa.back() == 0){
         _mantissa.pop_back();
     }
+    while(_mantissa.front() == 0){
+        _mantissa.erase(_mantissa.begin());
+    }
 }
 
+
+//comparants-------------------------------
+std::strong_ordering operator<=>(const bigfloat& x, const bigfloat& y) {
+
+    if (y._signum != x._signum){
+        return x._signum <=> y._signum;
+    }
+
+    if (y._exponent != x._exponent){
+        return x._exponent <=> y._exponent;
+    }
+
+    for(lli index = x._exponent - 1; index >=  x._exponent - (lli) x._mantissa.size(); --index){
+        if(x[index] != y[index]){
+            return x[index] <=> y[index];
+        }
+    }
+
+    return y._mantissa.size() <=> x._mantissa.size();
+
+}
+
+bool operator==(const bigfloat& x, const bigfloat& y){
+    if (y._signum != x._signum || y._exponent != x._exponent || x._mantissa.size() != y._mantissa.size()){
+        return false;
+    }
+
+    for(lli index = x._exponent - (lli) x._mantissa.size(); index < x._exponent; ++index){
+        if(x[index] != y[index]){
+            return false;
+        }
+    }
+    return true;
+}
+//-------------------------------
+
+
+//-------------------------------
+/*basically it returns the n-th digit in base BASE,
+ * so for example BASE = 4, x = 12.3 -> {1, 2, 3}
+ * x[0] = 2, x[1] = 1, x[-1] = 3, x[123]=0
+ * */
+digit_t bigfloat::operator[](lli index) const {
+    if (index < _exponent && index <= greatest()){
+        return _mantissa[_exponent - index - 1];
+    }
+    return 0;
+}
+
+inline constexpr digit_t &bigfloat::operator[](lli index) {
+    if (index > greatest()){
+        _mantissa.insert(_mantissa.begin(),  index - greatest(), 0);
+        return _mantissa[++_exponent - index -1];
+    } else if (index < lowest()){
+        _mantissa.insert(_mantissa.end(),  lowest() - index, 0);
+    }
+
+    return _mantissa[_exponent - index - 1];
+}
+//-------------------------------
+
+
+//subtraction-------------------------------
 bigfloat bigfloat::operator-() {
     _signum = !_signum;
     return *this;
 }
 
-
-bigfloat bigfloat::operator+(bigfloat x) {
-    char carry = 0;
-
-    auto num_size = _mantissa.size();
-    auto x_size = x._mantissa.size();
-
-    for (auto i = x_size - x._exponent + _exponent; i < num_size ; ++i){
-        x._mantissa.push_back(_mantissa[i]);
-    }
-
-
-
-    for (auto i = x_size - 1; i > 0; --i ){
-
-        x._mantissa[i] += carry + (i - x._exponent + _exponent < num_size ? _mantissa[i - x._exponent + _exponent] : 0);
-
-        if(x._mantissa[i] > 9){
-            carry = 1;
-            x._mantissa[i] -= 10;
+bigfloat operator-(bigfloat a, bigfloat b){
+    for (auto i = (lli) fmin(a.lowest(), b.lowest()); i <= (lli) fmax(a.greatest(), b.greatest()); ++i){
+        if (a[i] < b[i]){
+            a[i] += (BASE - b[i]);
+            a[i+1]--;
         } else{
-            carry = 0;
+            a[i] -= b[i];
         }
     }
 
-    x.discard_zeros();
+    a.discard_zeros();
 
-    for (auto i = -x._exponent + _exponent; i > 0; --i){
-
-        _mantissa[i] += carry;
-        if(_mantissa[i] + carry > 9){
-            x._mantissa.insert(x._mantissa.begin(), _mantissa[i]);
-        } else{
-            x._mantissa.insert(x._mantissa.begin(), _mantissa[i] + carry);
-            carry = 0;
-        }
-
-
-    }
-
-    if (carry != 0)
-        x._mantissa.insert(x._mantissa.begin(), carry);
-
-    x._exponent = fmax(_exponent, x._exponent);
-
-    return x;
+    return a;
 }
 
-
-
-std::strong_ordering bigfloat::operator<=>(bigfloat x) const {
-
-    if (_signum != x._signum){
-        return x._signum <=> _signum;
-    }
-
-    if (_exponent != x._exponent){
-        return _exponent <=> x._exponent;
-    }
-
-
-    auto shared_size = fmin(_mantissa.size(), x._mantissa.size());
-    for (int i = 0; i < shared_size; ++i){
-        if (_mantissa[i] != x._mantissa[i]){
-            return _mantissa[i] <=> x._mantissa[i];
-        }
-    }
-    return _mantissa.size() <=> x._mantissa.size();
-
+bigfloat& bigfloat::operator-=(bigfloat other) {
+    return *this = *this - std::move(other);
 }
 
-bool bigfloat::operator==(bigfloat x) const {
-    if (_signum != x._signum || _exponent != x._exponent){
-        return false;
+bigfloat operator-(bigfloat a, lli b){
+    if (b < 0){
+        return a + (-b);
     }
 
+    if (a[0] - b < 0){
+        a[0] += BASE - b;
+        a[1]--;
+    }
 
-    auto shared_size = fmin(_mantissa.size(), x._mantissa.size());
-    for (int i = 0; i < shared_size; ++i){
-        if (_mantissa[i] != x._mantissa[i]){
-            return false;
+    a.discard_zeros();
+
+    return a;
+}
+
+bigfloat& bigfloat::operator-=(lli b) {
+    return *this = *this - b;
+}
+
+const bigfloat& bigfloat::operator--() {
+    return *this -= 1;
+}
+
+const bigfloat bigfloat::operator--(int) {
+    *this -= 1;
+    return (*this + 1);
+}
+//-------------------------------
+
+
+//addition-------------------------------
+bigfloat operator+(bigfloat a, bigfloat b){
+    if (a._signum != b._signum){
+        if (b._signum) return a - (-b);
+        return b - (-a);
+    }
+
+    for (auto i = (lli) fmin(a.lowest(), b.lowest()); i <= (lli) fmax(a.greatest(), b.greatest()); ++i){
+        a[i] += b[i];
+        if (a[i] > BASE){
+            a[i] -= BASE;
+            b[i+1]++;
         }
     }
-    return _mantissa.size() == x._mantissa.size();
+
+    a.discard_zeros();
+
+    return a;
 }
+
+bigfloat& bigfloat::operator+=(bigfloat other) {
+    return *this = *this + std::move(other);
+}
+
+bigfloat operator+(bigfloat a, lli b){
+    if (b < 0){
+        return a - (-b);
+    }
+
+    a[0] += b;
+    if (a[0] > BASE){
+        a[0] -= BASE;
+        a[1]++;
+    }
+
+    a.discard_zeros();
+
+    return a;
+}
+
+bigfloat& bigfloat::operator+=(lli b) {
+    return *this = *this + b;
+}
+
+const bigfloat& bigfloat::operator++() {
+    return *this += 1;
+}
+
+const bigfloat bigfloat::operator++(int) {
+    *this += 1;
+    return (*this - 1);
+}
+//-------------------------------
+
+//multiplication-------------------------------
+bigfloat operator*(bigfloat a, bigfloat b){
+    if (a==0_bf || b == 0_bf){
+        return 0_bf;
+    }
+    digit_t carry;
+    auto c = 0_bf;
+
+    for (auto i = (lli) fmin(a.lowest(), b.lowest()); i <= a.greatest(); ++i){
+        carry = 0;
+        for (auto j = (lli) fmin(a.lowest(), b.lowest()); j <= b.greatest()  || carry != 0; ++j){
+            auto x = c[i+j] + a[i]*b[j] + carry;
+            if (bigfloat::valuable(i + j))
+                c[i+j] = x%BASE;
+            carry = x/BASE;
+        }
+    }
+
+    c.discard_zeros();
+    c._signum = a._signum != b._signum;
+//    a._exponent += b._exponent;
+    c._exponent = (lli) c._mantissa.size() - (lli) fmin(a.accuracy() + b.accuracy(), bigfloat::border());
+    return c;
+}
+
+bigfloat &bigfloat::operator*=(bigfloat b) {
+    return *this = (*this) * std::move(b);
+}
+
+bigfloat operator*(bigfloat a, lli b){
+    if (a==0_bf || b == 0) return 0_bf;
+
+    if (b < 0){
+        a._signum  = !a._signum;
+        b = -b;
+    }
+    digit_t carry = 0;
+
+    for (auto i = a.lowest(); i <= a.greatest(); ++i){
+        auto x = (a[i]*b + carry);
+        a[i] = x%BASE;
+        carry = x/BASE;
+    }
+
+    a.discard_zeros();
+
+    return a;
+}
+
+bigfloat &bigfloat::operator*=(lli b) {
+    return *this = (*this) * b;
+}
+
+lli bigfloat::accuracy() {
+    return (lli) _mantissa.size() - _exponent;
+}
+
+bool bigfloat::valuable(lli index) {
+    return index >= 0 or (-index <= border());
+}
+
+lli bigfloat::border() {
+//    return (bigfloat::precision()/CAPACITY) + ((bigfloat::precision()%CAPACITY)!=0);
+    return (bigfloat::precision()/CAPACITY) + 1;
+}
+//-------------------------------
+
+
+//division-------------------------------
+bigfloat operator/(bigfloat a, lli b){
+    if (b == 0) throw std::domain_error("division by 0");
+    for (auto i = a.greatest(); i >= a.lowest() && a[i] != 0 && i >= -a.border(); --i){
+        a[i-1] += (a[i] % b)*BASE;
+        a[i] /= b;
+    }
+
+    return a;
+}
+
+bigfloat &bigfloat::operator/=(lli b) {
+    return *this = *this/b;
+}
+
+//bigfloat operator/(bigfloat a, bigfloat b){
+//    digit_t x = 1;
+//    if(b._mantissa[0] < BASE/2){
+//        x = ((BASE/2)%b._mantissa[0]!=0) + (BASE/2)/b._mantissa[0];
+//    }
+//    b *= x;
+//}
