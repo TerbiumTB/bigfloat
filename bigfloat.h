@@ -6,6 +6,7 @@
 #include <ostream>
 #include <sstream>
 #include <cmath>
+#include <compare>
 
 #define BASE (digit_t) 1e9
 #define CAPACITY 9
@@ -68,26 +69,40 @@ public:
     bigfloat operator-();
 
     friend bigfloat operator-( bigfloat, bigfloat);
-
     bigfloat& operator-=(bigfloat);
+
+    friend bigfloat operator-(bigfloat, lli);
+    bigfloat& operator-=(lli);
 
     const bigfloat& operator--();
     const bigfloat operator--(int);
 
 
     friend bigfloat operator+(bigfloat, bigfloat);
-
     bigfloat& operator+=(bigfloat);
+
+    friend bigfloat operator+(bigfloat, lli);
+    bigfloat& operator+=(lli);
 
     const bigfloat& operator++();
     const bigfloat operator++(int);
 
+
     friend bigfloat operator*(bigfloat, bigfloat);
     bigfloat& operator*=(bigfloat);
 
+    friend bigfloat operator*(bigfloat, lli);
+    bigfloat& operator*=(lli);
+
+
+    friend bigfloat operator/(bigfloat, lli);
+    bigfloat& operator/=(lli);
+
+    friend bigfloat operator/(bigfloat, bigfloat);
+    bigfloat& operator/=(bigfloat);
+
 
     friend bool operator==(const bigfloat&, const bigfloat&);
-
     friend std::strong_ordering operator<=>(const bigfloat&, const bigfloat&);
 
 };

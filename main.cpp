@@ -16,11 +16,12 @@
 int main() {
 //    std::vector<int> a = {13213, 213534, 12712, 13819, 91763};
     auto b = bigfloat("1.32300004");
-    auto a = bigfloat("12,23476567567577");
+    auto a = bigfloat("12");
 //    a += b;
 
 //    auto b = bigfloat("10000000001");
-    auto c = a * b;
+    auto c = a/7;
+    c *= -1;
 //    c -= 2_bf;
 //    auto d = c--;
 //    ++d;

@@ -41,14 +41,14 @@
 				{
 					"directoryIndex" : 0,
 					"id" : "bigfloat::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-bigfloat-Debug-3bcd88c494bf68ede825.json",
+					"jsonFile" : "target-bigfloat-Debug-3373f1d909a4355c3271.json",
 					"name" : "bigfloat",
 					"projectIndex" : 0
 				},
 				{
 					"directoryIndex" : 0,
 					"id" : "main::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-main-Debug-1202d9e227a424a73af1.json",
+					"jsonFile" : "target-main-Debug-16b2a65269196189deea.json",
 					"name" : "main",
 					"projectIndex" : 0
 				}
@@ -58,8 +58,8 @@
 	"kind" : "codemodel",
 	"paths" : 
 	{
-		"build" : "/Users/timofejbulgakov/CLionProjects/bigfloat/cmake-build-debug",
-		"source" : "/Users/timofejbulgakov/CLionProjects/bigfloat"
+		"build" : "/Users/timofeybulgakov/CLionProjects/HSEhomework/very_long_float/cmake-build-debug",
+		"source" : "/Users/timofeybulgakov/CLionProjects/HSEhomework/very_long_float"
 	},
 	"version" : 
 	{

@@ -1,5 +1,7 @@
 #include "bigfloat.h"
 
+#include <utility>
+
 
 // static-------------------------------
 lli bigfloat::_precision = 25;
@@ -54,10 +56,20 @@ bigfloat::bigfloat(std::string input) {
         _signum = false;
     }
 
-    char separator = input.find('.') < std::string::npos ? '.' : ',';
+
+    char separator = '.';
+
+    if(input.find('.') == std::string::npos){
+        if (input.find(',') < std::string::npos) separator = ',';
+        else input += '.';
+    }
+
+//    char separator = input.find('.') < std::string::npos ? '.' : ',';
+
 
     input = input + std::string(mod(input.size() - input.find(separator) - 1, CAPACITY), '0');
 
+    auto y = mod(input.size() - 1, CAPACITY);
     input = std::string(mod(input.size() - 1, CAPACITY), '0') + input;
 
     _exponent = (lli) input.find(separator)/CAPACITY;
@@ -117,9 +129,9 @@ std::string bigfloat::to_string() {
         if (i == 0){
             number += num2string(_mantissa[i]);
         }
-        if(i == ){
-
-        }
+//        if(i == ){
+//
+//        }
         else{
             number += fnum2string(_mantissa[i]);
         }
@@ -129,6 +141,8 @@ std::string bigfloat::to_string() {
     while(number.back() == '0'){
         number.pop_back();
     }
+    if(_mantissa.size() == _exponent)
+        number += '.';
 
     return number + '0';
 }
@@ -229,16 +243,34 @@ bigfloat operator-(bigfloat a, bigfloat b){
 
 bigfloat& bigfloat::operator-=(bigfloat other) {
     return *this = *this - std::move(other);
+}
 
+bigfloat operator-(bigfloat a, lli b){
+    if (b < 0){
+        return a + (-b);
+    }
+
+    if (a[0] - b < 0){
+        a[0] += BASE - b;
+        a[1]--;
+    }
+
+    a.discard_zeros();
+
+    return a;
+}
+
+bigfloat& bigfloat::operator-=(lli b) {
+    return *this = *this - b;
 }
 
 const bigfloat& bigfloat::operator--() {
-    return *this -= 1_bf;
+    return *this -= 1;
 }
 
 const bigfloat bigfloat::operator--(int) {
-    *this -= 1_bf;
-    return (*this + 1_bf);
+    *this -= 1;
+    return (*this + 1);
 }
 //-------------------------------
 
@@ -267,13 +299,33 @@ bigfloat& bigfloat::operator+=(bigfloat other) {
     return *this = *this + std::move(other);
 }
 
+bigfloat operator+(bigfloat a, lli b){
+    if (b < 0){
+        return a - (-b);
+    }
+
+    a[0] += b;
+    if (a[0] > BASE){
+        a[0] -= BASE;
+        a[1]++;
+    }
+
+    a.discard_zeros();
+
+    return a;
+}
+
+bigfloat& bigfloat::operator+=(lli b) {
+    return *this = *this + b;
+}
+
 const bigfloat& bigfloat::operator++() {
-    return *this += 1_bf;
+    return *this += 1;
 }
 
 const bigfloat bigfloat::operator++(int) {
-    *this += 1_bf;
-    return (*this - 1_bf);
+    *this += 1;
+    return (*this - 1);
 }
 //-------------------------------
 
@@ -302,6 +354,34 @@ bigfloat operator*(bigfloat a, bigfloat b){
     return c;
 }
 
+bigfloat &bigfloat::operator*=(bigfloat b) {
+    return *this = (*this) * std::move(b);
+}
+
+bigfloat operator*(bigfloat a, lli b){
+    if (a==0_bf || b == 0) return 0_bf;
+
+    if (b < 0){
+        a._signum  = !a._signum;
+        b = -b;
+    }
+    digit_t carry = 0;
+
+    for (auto i = a.lowest(); i <= a.greatest(); ++i){
+        auto x = (a[i]*b + carry);
+        a[i] = x%BASE;
+        carry = x/BASE;
+    }
+
+    a.discard_zeros();
+
+    return a;
+}
+
+bigfloat &bigfloat::operator*=(lli b) {
+    return *this = (*this) * b;
+}
+
 lli bigfloat::accuracy() {
     return (lli) _mantissa.size() - _exponent;
 }
@@ -314,3 +394,28 @@ lli bigfloat::border() {
 //    return (bigfloat::precision()/CAPACITY) + ((bigfloat::precision()%CAPACITY)!=0);
     return (bigfloat::precision()/CAPACITY) + 1;
 }
+//-------------------------------
+
+
+//division-------------------------------
+bigfloat operator/(bigfloat a, lli b){
+    if (b == 0) throw std::domain_error("division by 0");
+    for (auto i = a.greatest(); i >= a.lowest() && a[i] != 0 && i >= -a.border(); --i){
+        a[i-1] += (a[i] % b)*BASE;
+        a[i] /= b;
+    }
+
+    return a;
+}
+
+bigfloat &bigfloat::operator/=(lli b) {
+    return *this = *this/b;
+}
+
+//bigfloat operator/(bigfloat a, bigfloat b){
+//    digit_t x = 1;
+//    if(b._mantissa[0] < BASE/2){
+//        x = ((BASE/2)%b._mantissa[0]!=0) + (BASE/2)/b._mantissa[0];
+//    }
+//    b *= x;
+//}

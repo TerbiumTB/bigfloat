@@ -1,2 +1,0 @@
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ar qc libver_lon_float.a CMakeFiles/ver_lon_float.dir/main.cpp.o CMakeFiles/ver_lon_float.dir/bigfloat.cpp.o
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ranlib libver_lon_float.a
