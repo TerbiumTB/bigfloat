@@ -1,4 +1,4 @@
-# Install script for directory: /Users/timofeybulgakov/CLionProjects/HSEhomework/very_long_float
+# Install script for directory: /Users/timofejbulgakov/CLionProjects/bigfloat
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -45,5 +45,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/Users/timofeybulgakov/CLionProjects/HSEhomework/very_long_float/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/Users/timofejbulgakov/CLionProjects/bigfloat/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

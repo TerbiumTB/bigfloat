@@ -35,13 +35,16 @@ private:
      * equals 1.00000000002*/
 
     static digit_t to_digit(char);
-    static void add_digit(digit_t&, char);
+
+    static void add_digit(digit_t &, char);
 
     static std::string num2string(digit_t);
+
     static std::string fnum2string(digit_t);
 
-    digit_t operator[] (lli) const;
-    constexpr digit_t& operator[] (lli);
+    digit_t operator[](lli) const;
+
+    constexpr digit_t &operator[](lli);
 
     void discard_zeros();
 
@@ -52,58 +55,88 @@ public:
     bigfloat(std::string);
 
     static lli precision(lli);
+
     static lli precision();
+
     static bool valuable(lli);
+
     static lli border();
 
-    lli accuracy();
+    lli accuracy() const;
 
 
     std::string to_string();
 
     int sign() const;
+
     lli greatest() const;
-    lli lowest();
+
+    lli lowest() const;
 
 
-    bigfloat operator-();
+    bigfloat operator-() const;
 
-    friend bigfloat operator-( bigfloat, bigfloat);
-    bigfloat& operator-=(bigfloat);
+    friend bigfloat operator-(bigfloat, const bigfloat &);
+
+    bigfloat &operator-=(const bigfloat &);
 
     friend bigfloat operator-(bigfloat, lli);
-    bigfloat& operator-=(lli);
 
-    const bigfloat& operator--();
+    friend bigfloat operator-(lli, bigfloat);
+
+    bigfloat &operator-=(lli);
+
+    const bigfloat &operator--();
+
     const bigfloat operator--(int);
 
 
-    friend bigfloat operator+(bigfloat, bigfloat);
-    bigfloat& operator+=(bigfloat);
+    friend bigfloat operator+(bigfloat, const bigfloat &);
+
+    bigfloat &operator+=(const bigfloat &);
 
     friend bigfloat operator+(bigfloat, lli);
-    bigfloat& operator+=(lli);
 
-    const bigfloat& operator++();
+    friend bigfloat operator+(lli, bigfloat);
+
+    bigfloat &operator+=(lli);
+
+    const bigfloat &operator++();
+
     const bigfloat operator++(int);
 
 
-    friend bigfloat operator*(bigfloat, bigfloat);
-    bigfloat& operator*=(bigfloat);
+    friend bigfloat operator*(bigfloat, const bigfloat &);
+
+    bigfloat &operator*=(const bigfloat &);
 
     friend bigfloat operator*(bigfloat, lli);
-    bigfloat& operator*=(lli);
+
+    friend bigfloat operator*(lli, bigfloat);
+
+    bigfloat &operator*=(lli);
 
 
     friend bigfloat operator/(bigfloat, lli);
-    bigfloat& operator/=(lli);
+
+    bigfloat &operator/=(lli);
 
     friend bigfloat operator/(bigfloat, bigfloat);
-    bigfloat& operator/=(bigfloat);
+
+    bigfloat &operator/=(bigfloat);
 
 
-    friend bool operator==(const bigfloat&, const bigfloat&);
-    friend std::strong_ordering operator<=>(const bigfloat&, const bigfloat&);
+    friend bool operator==(const bigfloat &, const bigfloat &);
+
+    friend std::strong_ordering operator<=>(const bigfloat &, const bigfloat &);
+
+    friend bool operator==(lli, const bigfloat &);
+
+    friend std::strong_ordering operator<=>(lli, const bigfloat &);
+
+    friend bool operator==(const bigfloat &, lli);
+
+    friend std::strong_ordering operator<=>(const bigfloat &, lli);
 
 };
 

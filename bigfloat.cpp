@@ -11,7 +11,7 @@ lli bigfloat::precision() {
 }
 
 lli bigfloat::precision(lli p) {
-    if (p >= 0){
+    if (p >= 0) {
         _precision = p;
     }
     return _precision;
@@ -21,8 +21,8 @@ digit_t bigfloat::to_digit(char digit) {
     return digit - '0';
 }
 
-void bigfloat::add_digit(digit_t & x, char digit) {
-    x = 10*x + to_digit(digit);
+void bigfloat::add_digit(digit_t &x, char digit) {
+    x = 10 * x + to_digit(digit);
 }
 
 std::string bigfloat::num2string(digit_t n) {
@@ -49,17 +49,17 @@ bigfloat::bigfloat() {
 
 bigfloat::bigfloat(std::string input) {
 
-    if (input[0] == '-'){
+    if (input[0] == '-') {
         _signum = true;
         input.erase(input.begin());
-    }else{
+    } else {
         _signum = false;
     }
 
 
     char separator = '.';
 
-    if(input.find('.') == std::string::npos){
+    if (input.find('.') == std::string::npos) {
         if (input.find(',') < std::string::npos) separator = ',';
         else input += '.';
     }
@@ -69,22 +69,22 @@ bigfloat::bigfloat(std::string input) {
 
     input = input + std::string(mod(input.size() - input.find(separator) - 1, CAPACITY), '0');
 
-    auto y = mod(input.size() - 1, CAPACITY);
     input = std::string(mod(input.size() - 1, CAPACITY), '0') + input;
 
-    _exponent = (lli) input.find(separator)/CAPACITY;
+    _exponent = (lli) input.find(separator) / CAPACITY;
     std::erase(input, separator);
 
     digit_t accum = 0;
     auto iter = input.begin();
-    while (iter != input.end()){
-        for(int i = 0; i < CAPACITY; ++i){
+    while (iter != input.end()) {
+        for (int i = 0; i < CAPACITY; ++i) {
             add_digit(accum, *iter);
             iter++;
         }
         _mantissa.push_back(accum);
         accum = 0;
     }
+
     discard_zeros();
 
 }
@@ -112,7 +112,7 @@ lli bigfloat::greatest() const {
     return _exponent - 1;
 }
 
-lli bigfloat::lowest() {
+lli bigfloat::lowest() const {
     return _exponent - (lli) _mantissa.size();
 }
 //-------------------------------
@@ -122,27 +122,22 @@ lli bigfloat::lowest() {
 std::string bigfloat::to_string() {
     std::string number = _signum ? "-" : "";
 
-    for (auto i = 0; i < _mantissa.size(); ++i){
-        if (i == _exponent)
-            number += '.';
+    for (auto i = 0; i < _mantissa.size(); ++i) {
+        if (i == _exponent) number += '.';
 
-        if (i == 0){
-            number += num2string(_mantissa[i]);
-        }
+        if (i == 0) number += num2string(_mantissa[i]);
 //        if(i == ){
 //
 //        }
-        else{
-            number += fnum2string(_mantissa[i]);
-        }
+        else number += fnum2string(_mantissa[i]);
     }
 
     number += '0';
-    while(number.back() == '0'){
+    if (_mantissa.size() == _exponent) number += '.';
+
+    while (number.back() == '0')
         number.pop_back();
-    }
-    if(_mantissa.size() == _exponent)
-        number += '.';
+
 
     return number + '0';
 }
@@ -150,69 +145,101 @@ std::string bigfloat::to_string() {
 
 
 void bigfloat::discard_zeros() {
-    while (_mantissa.back() == 0){
+    while (_mantissa.size() != _exponent && _mantissa.back() == 0)
         _mantissa.pop_back();
-    }
-    while(_mantissa.front() == 0){
+
+    while (_mantissa.front() == 0) {
         _mantissa.erase(_mantissa.begin());
+        --_exponent;
     }
 }
 
 
 //comparants-------------------------------
-std::strong_ordering operator<=>(const bigfloat& x, const bigfloat& y) {
+std::strong_ordering operator<=>(const bigfloat &x, const bigfloat &y) {
 
-    if (y._signum != x._signum){
-        return x._signum <=> y._signum;
-    }
+    if (y._signum != x._signum) return x._signum <=> y._signum;
 
-    if (y._exponent != x._exponent){
-        return x._exponent <=> y._exponent;
-    }
+    if (y._exponent != x._exponent) return x._exponent <=> y._exponent;
 
-    for(lli index = x._exponent - 1; index >=  x._exponent - (lli) x._mantissa.size(); --index){
-        if(x[index] != y[index]){
-            return x[index] <=> y[index];
-        }
-    }
+    for (lli index = x._exponent - 1; index >= x._exponent - (lli) x._mantissa.size(); --index)
+        if (x[index] != y[index]) return x[index] <=> y[index];
+
 
     return y._mantissa.size() <=> x._mantissa.size();
 
 }
 
-bool operator==(const bigfloat& x, const bigfloat& y){
-    if (y._signum != x._signum || y._exponent != x._exponent || x._mantissa.size() != y._mantissa.size()){
-        return false;
-    }
+std::strong_ordering operator<=>(lli x, const bigfloat &y) {
 
-    for(lli index = x._exponent - (lli) x._mantissa.size(); index < x._exponent; ++index){
-        if(x[index] != y[index]){
-            return false;
-        }
-    }
+    if (y.sign() * x < 0) return x <=> y.sign();
+
+    x = abs(x);
+
+    if (y.greatest() != 0) return 0 <=> y.greatest();
+
+    if (y[0] != (digit_t) x) return (digit_t) x <=> y[0];
+
+    for (auto i = -1; i >= y.lowest(); --i)
+        if (y[i]) return 0 <=> y.sign();
+
+
+    return 0 <=> 0;
+}
+
+std::strong_ordering operator<=>(const bigfloat &x, lli y) {
+    \
+
+    if (x.sign() * y < 0) return x.sign() <=> y;
+
+    y = abs(y);
+
+    if (x.greatest() != 0) return x.greatest() <=> 0;
+
+    if (x[0] != (digit_t) y) return x[0] <=> (digit_t) y;
+
+    for (auto i = -1; i >= x.lowest(); --i)
+        if (x[i]) return x.sign() <=> y;
+
+
+    return 0 <=> 0;
+}
+
+bool operator==(const bigfloat &x, const bigfloat &y) {
+    if (y._signum != x._signum || y._exponent != x._exponent || x._mantissa.size() != y._mantissa.size()) return false;
+
+    for (lli index = x._exponent - (lli) x._mantissa.size(); index < x._exponent; ++index)
+        if (x[index] != y[index]) return false;
+
     return true;
+}
+
+bool operator==(lli x, const bigfloat &y) {
+    return (x * y.sign() >= 0) && y._mantissa.size() == 1 && y.greatest() == 0 && abs(x) == y[0];
+}
+
+bool operator==(const bigfloat &x, lli y) {
+    return y == x;
 }
 //-------------------------------
 
 
 //-------------------------------
-/*basically it returns the n-th digit in base BASE,
- * so for example BASE = 4, x = 12.3 -> {1, 2, 3}
- * x[0] = 2, x[1] = 1, x[-1] = 3, x[123]=0
+/*basically it returns the n-th digit in current base (BASE),
+ * so, for example, in BASE = 4, for x = 12.3 -> {1, 2, 3}
+ * x[0] = 2, x[1] = 1, x[-1] = 3, x[123] = 0
  * */
 digit_t bigfloat::operator[](lli index) const {
-    if (index < _exponent && index <= greatest()){
-        return _mantissa[_exponent - index - 1];
-    }
+    if (index < _exponent && index <= greatest()) return _mantissa[_exponent - index - 1];
     return 0;
 }
 
 inline constexpr digit_t &bigfloat::operator[](lli index) {
-    if (index > greatest()){
-        _mantissa.insert(_mantissa.begin(),  index - greatest(), 0);
-        return _mantissa[++_exponent - index -1];
-    } else if (index < lowest()){
-        _mantissa.insert(_mantissa.end(),  lowest() - index, 0);
+    if (index > greatest()) {
+        _mantissa.insert(_mantissa.begin(), index - greatest(), 0);
+        return _mantissa[++_exponent - index - 1];
+    } else if (index < lowest()) {
+        _mantissa.insert(_mantissa.end(), lowest() - index, 0);
     }
 
     return _mantissa[_exponent - index - 1];
@@ -221,18 +248,30 @@ inline constexpr digit_t &bigfloat::operator[](lli index) {
 
 
 //subtraction-------------------------------
-bigfloat bigfloat::operator-() {
+bigfloat bigfloat::operator-() const {
     auto inverse(*this);
     inverse._signum = !_signum;
     return inverse;
 }
 
-bigfloat operator-(bigfloat a, bigfloat b){
-    for (auto i = (lli) fmin(a.lowest(), b.lowest()); i <= (lli) fmax(a.greatest(), b.greatest()); ++i){
-        if (a[i] < b[i]){
+bigfloat operator-(bigfloat a, const bigfloat &b) {
+
+    if (b._signum) return a + (-b);
+    else if (a._signum) return -(-a + b);
+    else if (a < b) return -(b - a);
+
+    for (auto i = (lli) fmin(a.lowest(), b.lowest()); i <= (lli) fmax(a.greatest(), b.greatest()); ++i) {
+        if (a[i] < b[i]) {
             a[i] += (BASE - b[i]);
-            a[i+1]--;
-        } else{
+            for (auto j = i + 1; j <= a.greatest(); ++j) {
+                if (a[j] == 0) {
+                    a[j] = BASE - 1;
+                } else {
+                    a[j]--;
+                    break;
+                }
+            }
+        } else {
             a[i] -= b[i];
         }
     }
@@ -242,19 +281,27 @@ bigfloat operator-(bigfloat a, bigfloat b){
     return a;
 }
 
-bigfloat& bigfloat::operator-=(bigfloat other) {
-    return *this = *this - std::move(other);
+bigfloat &bigfloat::operator-=(const bigfloat &other) {
+    return *this = *this - other;
 }
 
-bigfloat operator-(bigfloat a, lli b){
-    if (b < 0){
-        return a + (-b);
-    }
+bigfloat operator-(bigfloat a, lli b) {
+    if (b < 0) return a + (-b);
+    else if (a._signum) return -(-a + b);
+    else if (a < b) return -(b - a);
 
-    if (a[0] - b < 0){
+
+    if (a[0] == 0 || a[0] - b < 0) {
         a[0] += BASE - b;
-        a[1]--;
-    } else{
+        for (auto j = 1; j <= a.greatest(); ++j) {
+            if (a[j] == 0) {
+                a[j] = BASE - 1;
+            } else {
+                a[j]--;
+                break;
+            }
+        }
+    } else {
         a[0] -= b;
     }
 
@@ -263,11 +310,15 @@ bigfloat operator-(bigfloat a, lli b){
     return a;
 }
 
-bigfloat& bigfloat::operator-=(lli b) {
+bigfloat operator-(lli a, bigfloat b) {
+    return -(std::move(b) - a);
+}
+
+bigfloat &bigfloat::operator-=(lli b) {
     return *this = *this - b;
 }
 
-const bigfloat& bigfloat::operator--() {
+const bigfloat &bigfloat::operator--() {
     return *this -= 1;
 }
 
@@ -279,17 +330,20 @@ const bigfloat bigfloat::operator--(int) {
 
 
 //addition-------------------------------
-bigfloat operator+(bigfloat a, bigfloat b){
-    if (a._signum != b._signum){
+bigfloat operator+(bigfloat a, const bigfloat &b) {
+    if (a._signum != b._signum) {
         if (b._signum) return a - (-b);
         return b - (-a);
     }
 
-    for (auto i = (lli) fmin(a.lowest(), b.lowest()); i <= (lli) fmax(a.greatest(), b.greatest()); ++i){
-        a[i] += b[i];
-        if (a[i] > BASE){
+    auto carry = 0;
+    for (auto i = (lli) fmin(a.lowest(), b.lowest()); i <= (lli) fmax(a.greatest(), b.greatest()) || carry != 0; ++i) {
+        a[i] += b[i] + carry;
+        if (a[i] >= BASE) {
             a[i] -= BASE;
-            b[i+1]++;
+            carry = 1;
+        } else {
+            carry = 0;
         }
     }
 
@@ -298,17 +352,18 @@ bigfloat operator+(bigfloat a, bigfloat b){
     return a;
 }
 
-bigfloat& bigfloat::operator+=(bigfloat other) {
-    return *this = *this + std::move(other);
+bigfloat &bigfloat::operator+=(const bigfloat &other) {
+    return *this = *this + other;
 }
 
-bigfloat operator+(bigfloat a, lli b){
-    if (b < 0){
-        return a - (-b);
+bigfloat operator+(bigfloat a, lli b) {
+    if (a.sign() * b < 0) {
+        if (b < 0) return a - (-b);
+        return b - (-a);
     }
 
     a[0] += b;
-    if (a[0] > BASE){
+    if (a[0] >= BASE) {
         a[0] -= BASE;
         a[1]++;
     }
@@ -318,11 +373,15 @@ bigfloat operator+(bigfloat a, lli b){
     return a;
 }
 
-bigfloat& bigfloat::operator+=(lli b) {
+bigfloat operator+(lli a, bigfloat b) {
+    return std::move(b) + a;
+}
+
+bigfloat &bigfloat::operator+=(lli b) {
     return *this = *this + b;
 }
 
-const bigfloat& bigfloat::operator++() {
+const bigfloat &bigfloat::operator++() {
     return *this += 1;
 }
 
@@ -333,47 +392,49 @@ const bigfloat bigfloat::operator++(int) {
 //-------------------------------
 
 //multiplication-------------------------------
-bigfloat operator*(bigfloat a, bigfloat b){
-    if (a==0_bf || b == 0_bf){
-        return 0_bf;
-    }
+bigfloat operator*(bigfloat a, const bigfloat &b) {
+    if (a == 0_bf || b == 0_bf) return 0_bf;
+
     digit_t carry;
     auto c = 0_bf;
 
-    for (auto i = (lli) fmin(a.lowest(), b.lowest()); i <= a.greatest(); ++i){
+    for (auto i = (lli) fmin(a.lowest(), b.lowest()); i <= a.greatest(); ++i) {
         carry = 0;
-        for (auto j = (lli) fmin(a.lowest(), b.lowest()); j <= b.greatest()  || carry != 0; ++j){
-            auto x = c[i+j] + a[i]*b[j] + carry;
-            if (bigfloat::valuable(i + j))
-                c[i+j] = x%BASE;
-            carry = x/BASE;
+
+        for (auto j = (lli) fmin(a.lowest(), b.lowest()); j <= b.greatest() || carry != 0; ++j) {
+            auto x = c[i + j] + a[i] * b[j] + carry;
+
+            if (bigfloat::valuable(i + j)) c[i + j] = x % BASE;
+
+            carry = x / BASE;
         }
     }
 
     c.discard_zeros();
+
     c._signum = a._signum != b._signum;
-//    a._exponent += b._exponent;
     c._exponent = (lli) c._mantissa.size() - (lli) fmin(a.accuracy() + b.accuracy(), bigfloat::border());
+
     return c;
 }
 
-bigfloat &bigfloat::operator*=(bigfloat b) {
-    return *this = (*this) * std::move(b);
+bigfloat &bigfloat::operator*=(const bigfloat &b) {
+    return *this = (*this) * b;
 }
 
-bigfloat operator*(bigfloat a, lli b){
-    if (a==0_bf || b == 0) return 0_bf;
+bigfloat operator*(bigfloat a, lli b) {
+    if (a == 0_bf || b == 0) return 0_bf;
 
-    if (b < 0){
-        a._signum  = !a._signum;
+    if (b < 0) {
+        a._signum = !a._signum;
         b = -b;
     }
     digit_t carry = 0;
 
-    for (auto i = a.lowest(); i <= a.greatest(); ++i){
-        auto x = (a[i]*b + carry);
-        a[i] = x%BASE;
-        carry = x/BASE;
+    for (auto i = a.lowest(); i <= a.greatest(); ++i) {
+        auto x = (a[i] * b + carry);
+        a[i] = x % BASE;
+        carry = x / BASE;
     }
 
     a.discard_zeros();
@@ -381,11 +442,15 @@ bigfloat operator*(bigfloat a, lli b){
     return a;
 }
 
+bigfloat operator*(lli a, bigfloat b) {
+    return std::move(b) * a;
+}
+
 bigfloat &bigfloat::operator*=(lli b) {
     return *this = (*this) * b;
 }
 
-lli bigfloat::accuracy() {
+lli bigfloat::accuracy() const {
     return (lli) _mantissa.size() - _exponent;
 }
 
@@ -395,16 +460,17 @@ bool bigfloat::valuable(lli index) {
 
 lli bigfloat::border() {
 //    return (bigfloat::precision()/CAPACITY) + ((bigfloat::precision()%CAPACITY)!=0);
-    return (bigfloat::precision()/CAPACITY) + 1;
+    return (bigfloat::precision() / CAPACITY) + 1;
 }
 //-------------------------------
 
 
 //division-------------------------------
-bigfloat operator/(bigfloat a, lli b){
-    if (b == 0) throw std::domain_error("division by 0");
-    for (auto i = a.greatest(); i >= a.lowest() && a[i] != 0 && i >= -a.border(); --i){
-        a[i-1] += (a[i] % b)*BASE;
+bigfloat operator/(bigfloat a, lli b) {
+    if (b == 0) throw std::overflow_error("division by 0");
+
+    for (auto i = a.greatest(); i >= a.lowest() && a[i] != 0 && i >= -a.border(); --i) {
+        a[i - 1] += (a[i] % b) * BASE;
         a[i] /= b;
     }
 
@@ -412,7 +478,7 @@ bigfloat operator/(bigfloat a, lli b){
 }
 
 bigfloat &bigfloat::operator/=(lli b) {
-    return *this = *this/b;
+    return *this = *this / b;
 }
 
 //bigfloat operator/(bigfloat a, bigfloat b){
