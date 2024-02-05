@@ -10,7 +10,15 @@
 
 #define BASE (digit_t) 1e9
 #define CAPACITY 9
+
+// constants for fft
+#define P (digit_t) 3221225473 //is modulus for FFT, equals 3*(2**30) + 1
+#define W 125
+#define IW (digit_t) 2267742733
+
+
 #define mod(a, m) ((m - (a)%m)%m)
+
 
 typedef unsigned long long digit_t;
 typedef long long int lli;
@@ -23,6 +31,7 @@ typedef long long int lli;
 class bigfloat {
 private:
     static lli _precision;
+    static lli _fft_roots[];
     std::vector<digit_t> _mantissa;
     lli _exponent;
     bool _signum;
@@ -53,6 +62,8 @@ public:
     bigfloat();
 
     bigfloat(std::string);
+
+    bigfloat(bool, lli, const std::vector<digit_t>&);
 
     static lli precision(lli);
 
@@ -106,6 +117,9 @@ public:
     const bigfloat operator++(int);
 
 
+    static void fft(std::vector<digit_t> &, digit_t w);
+    static void ifft(std::vector<digit_t> &, digit_t w);
+
     friend bigfloat operator*(bigfloat, const bigfloat &);
 
     bigfloat &operator*=(const bigfloat &);
@@ -117,7 +131,11 @@ public:
     bigfloat &operator*=(lli);
 
 
+    bigfloat inverse();
+
     friend bigfloat operator/(bigfloat, lli);
+
+    friend bigfloat operator/(lli, bigfloat);
 
     bigfloat &operator/=(lli);
 

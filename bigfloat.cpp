@@ -1,10 +1,10 @@
 #include "bigfloat.h"
-
 #include <utility>
 
 
 // static-------------------------------
 lli bigfloat::_precision = 25;
+lli bigfloat::_fft_roots[] = {};
 
 lli bigfloat::precision() {
     return _precision;
@@ -89,6 +89,11 @@ bigfloat::bigfloat(std::string input) {
 
 }
 
+bigfloat::bigfloat(bool signum, lli exponent, const std::vector<digit_t>& mantissa) {
+    _signum = signum;
+    _exponent = exponent;
+    _mantissa = mantissa;
+}
 bigfloat operator ""_bf(long double number) {
     if (number == 0.0)
         return {};
@@ -392,30 +397,139 @@ const bigfloat bigfloat::operator++(int) {
 //-------------------------------
 
 //multiplication-------------------------------
-bigfloat operator*(bigfloat a, const bigfloat &b) {
-    if (a == 0_bf || b == 0_bf) return 0_bf;
 
-    digit_t carry;
-    auto c = 0_bf;
+digit_t inv(digit_t a) {
+    return a <= 1 ? a : P - ((P/a) * inv(P % a) % P);
+}
 
-    for (auto i = (lli) fmin(a.lowest(), b.lowest()); i <= a.greatest(); ++i) {
-        carry = 0;
 
-        for (auto j = (lli) fmin(a.lowest(), b.lowest()); j <= b.greatest() || carry != 0; ++j) {
-            auto x = c[i + j] + a[i] * b[j] + carry;
 
-            if (bigfloat::valuable(i + j)) c[i + j] = x % BASE;
+void bigfloat::fft(std::vector<digit_t> & a, digit_t wn=W) {
+    auto n = a.size();
+    if (n == 1) return;
 
-            carry = x / BASE;
-        }
+    std::vector<digit_t> a0(n/2), a1(n/2);
+
+    for(auto i = 0; 2*i < n; ++i){
+        a0[i] = a[2*i];
+        a1[i] = a[2*i + 1];
     }
 
-    c.discard_zeros();
+    digit_t wn2 =(wn*wn)%P;
 
-    c._signum = a._signum != b._signum;
-    c._exponent = (lli) c._mantissa.size() - (lli) fmin(a.accuracy() + b.accuracy(), bigfloat::border());
+    fft(a0, wn2);
+    fft(a1, wn2);
 
-    return c;
+    digit_t w = 1;
+
+    for(int i = 0; i < n/2; ++i){
+        digit_t u = a[i];
+        digit_t v = a[i + n/2]*w;
+
+        a[i] = u + v < P ? u + v : u + v - P;
+        a[i + n/2] = u - v >= 0 ? u - v : u - v + P;
+
+        w = (w*wn)%P;
+    }
+}
+
+void bigfloat::ifft(std::vector<digit_t> & a, digit_t wn=IW) {
+    auto n = a.size();
+    if (n == 1) return;
+
+    auto n1 = inv(n);
+
+    std::vector<digit_t> a0(n/2), a1(n/2);
+
+    for(auto i = 0; 2*i < n; ++i){
+        a0[i] = a[2*i];
+        a1[i] = a[2*i + 1];
+    }
+
+    digit_t wn2 =(wn*wn)%P;
+
+    ifft(a0, wn2);
+    ifft(a1, wn2);
+
+    digit_t w = 1;
+
+    for(int i = 0; i < n/2; ++i){
+        digit_t u = a[i];
+        digit_t v = a[i + n/2]*w;
+
+        a[i] = u + v < P ? u + v : u + v - P;
+        a[i + n/2] = u - v >= 0 ? u - v : u - v + P;
+
+        w = (w*wn)%P;
+    }
+
+    for (auto&x : a)
+        x = (x*n1) % P;
+}
+
+//bigfloat operator*(bigfloat a, const bigfloat &b) {
+//    if (a == 0_bf || b == 0_bf) return 0_bf;
+//
+//    digit_t carry;
+//    auto c = 0_bf;
+//
+//    for (auto i = (lli) fmin(a.lowest(), b.lowest()); i <= a.greatest(); ++i) {
+//        carry = 0;
+//
+//        for (auto j = (lli) fmin(a.lowest(), b.lowest()); j <= b.greatest() || carry != 0; ++j) {
+//            auto x = c[i + j] + a[i] * b[j] + carry;
+//
+//            if (bigfloat::valuable(i + j)) c[i + j] = x % BASE;
+//
+//            carry = x / BASE;
+//        }
+//    }
+//
+//    c.discard_zeros();
+//
+//    c._signum = a._signum != b._signum;
+//    c._exponent = (lli) c._mantissa.size() - (lli) fmin(a.accuracy() + b.accuracy(), bigfloat::border());
+//
+//    return c;
+//}
+
+bigfloat operator*(bigfloat a, const bigfloat &b) {
+    auto fa(a._mantissa), fb(b._mantissa);
+    auto n = 1;
+    while (n <  fa.size() + fb.size())
+        n <<= 1;
+
+    fa.resize(n, 0);
+    fb.resize(n, 0);
+
+    bigfloat::fft(fa);
+    bigfloat::fft(fb);
+
+    digit_t carry = 0;
+    for (auto i = n-1; i >= 0; --i){
+        auto x = fa[i]*fb[i] + carry;
+        fa[i] = x % BASE;
+        carry = x/BASE;
+    }
+
+    bigfloat::ifft(fa);
+
+    carry = 0;
+    for(auto i = n-1; i >= 0; --i){
+        auto x= (fa[i] +carry);
+        fa[i] = (x + carry)%BASE;
+        carry = (x + carry)/BASE;
+    }
+
+    return {a._signum != b._signum, 1, fa};
+//    auto c = bigfloat(
+//            a._signum != b._signum,
+//            1,
+//            fa
+//            );
+
+//    c.discard_zeros();
+
 }
 
 bigfloat &bigfloat::operator*=(const bigfloat &b) {
@@ -466,6 +580,15 @@ lli bigfloat::border() {
 
 
 //division-------------------------------
+
+bigfloat bigfloat::inverse() {
+    auto exp = _exponent;
+    _exponent = 0;
+    auto c = 1_bf;
+
+
+
+}
 bigfloat operator/(bigfloat a, lli b) {
     if (b == 0) throw std::overflow_error("division by 0");
 
@@ -481,10 +604,6 @@ bigfloat &bigfloat::operator/=(lli b) {
     return *this = *this / b;
 }
 
-//bigfloat operator/(bigfloat a, bigfloat b){
-//    digit_t x = 1;
-//    if(b._mantissa[0] < BASE/2){
-//        x = ((BASE/2)%b._mantissa[0]!=0) + (BASE/2)/b._mantissa[0];
-//    }
-//    b *= x;
-//}
+bigfloat operator/(bigfloat a, bigfloat b){
+
+}
