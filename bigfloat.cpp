@@ -4,7 +4,7 @@
 
 
 // static-------------------------------
-lli bigfloat::_precision = 25;
+lli bigfloat::_precision = 100;
 
 lli bigfloat::precision() {
     return _precision;
@@ -34,7 +34,7 @@ std::string bigfloat::num2string(digit_t n) {
 std::string bigfloat::fnum2string(digit_t n) {
     std::ostringstream stm;
     stm << n;
-    std::string format(CAPACITY - stm.str().length(), '0');
+    std::string format(CAPACITY > stm.str().length() ? CAPACITY - stm.str().length() : 0, '0');
     return format + stm.str();
 }
 //-------------------------------
@@ -44,7 +44,7 @@ std::string bigfloat::fnum2string(digit_t n) {
 bigfloat::bigfloat() {
     _signum = false;
     _exponent = 0;
-    _mantissa.push_back(0);
+//    _mantissa.push_back(0);
 }
 
 bigfloat::bigfloat(std::string input) {
@@ -129,11 +129,12 @@ std::string bigfloat::to_string() {
 //        if(i == ){
 //
 //        }
-        else number += fnum2string(_mantissa[i]);
+        else
+            number += fnum2string(_mantissa[i]);
     }
 
-    number += '0';
-    if (_mantissa.size() == _exponent) number += '.';
+
+    if (_mantissa.size() == _exponent) number += ".";
 
     while (number.back() == '0')
         number.pop_back();
@@ -148,7 +149,7 @@ void bigfloat::discard_zeros() {
     while (_mantissa.size() != _exponent && _mantissa.back() == 0)
         _mantissa.pop_back();
 
-    while (_mantissa.front() == 0) {
+    while (_exponent != 1 && _mantissa.front() == 0) {
         _mantissa.erase(_mantissa.begin());
         --_exponent;
     }
@@ -431,7 +432,7 @@ bigfloat operator*(bigfloat a, lli b) {
     }
     digit_t carry = 0;
 
-    for (auto i = a.lowest(); i <= a.greatest(); ++i) {
+    for (auto i = a.lowest(); i <= a.greatest() || carry != 0; ++i) {
         auto x = (a[i] * b + carry);
         a[i] = x % BASE;
         carry = x / BASE;
@@ -460,7 +461,7 @@ bool bigfloat::valuable(lli index) {
 
 lli bigfloat::border() {
 //    return (bigfloat::precision()/CAPACITY) + ((bigfloat::precision()%CAPACITY)!=0);
-    return (bigfloat::precision() / CAPACITY) + 1;
+    return -(bigfloat::precision() / CAPACITY) + 1;
 }
 //-------------------------------
 
@@ -469,7 +470,7 @@ lli bigfloat::border() {
 bigfloat operator/(bigfloat a, lli b) {
     if (b == 0) throw std::overflow_error("division by 0");
 
-    for (auto i = a.greatest(); i >= a.lowest() && a[i] != 0 && i >= -a.border(); --i) {
+    for (auto i = a.greatest(); i >= a.lowest() && a[i] != 0 && i >= a.border(); --i) {
         a[i - 1] += (a[i] % b) * BASE;
         a[i] /= b;
     }
@@ -481,10 +482,56 @@ bigfloat &bigfloat::operator/=(lli b) {
     return *this = *this / b;
 }
 
-//bigfloat operator/(bigfloat a, bigfloat b){
-//    digit_t x = 1;
-//    if(b._mantissa[0] < BASE/2){
-//        x = ((BASE/2)%b._mantissa[0]!=0) + (BASE/2)/b._mantissa[0];
-//    }
-//    b *= x;
-//}
+bigfloat operator/(bigfloat a, bigfloat b){
+    if (b == 0) throw std::overflow_error("division by 0");
+
+    bigfloat c{};
+
+    c._signum = (a._signum != b._signum);
+    a._signum = b._signum = false;
+
+    if (a < b) c._mantissa.insert(c._mantissa.end(), a._exponent - b._exponent + 1, 0);
+
+    c._exponent = a._exponent - b._exponent + 1;
+
+
+    if (b._mantissa[0] == 0) b._mantissa.erase(b._mantissa.begin());
+
+    if (a._mantissa[0] == 0) a._mantissa.erase(a._mantissa.begin());
+
+    a._exponent = b._exponent;
+
+    while(c.lowest() >= c.border() && a != 0){
+
+        if (a < b) a._exponent++;
+
+        digit_t floor, ceil;
+        if (a._exponent > b._exponent){
+            floor = a._mantissa[0] * BASE / (b._mantissa[0] + 1);
+            ceil = (a._mantissa[0]+1) * BASE / (b._mantissa[0]);
+        } else{
+            floor = a._mantissa[0] / (b._mantissa[0] + 1);
+            ceil = a._mantissa[0] / (b._mantissa[0]);
+        }
+
+
+        while(b * floor <= a && floor < ceil) {
+            if (b*((floor + ceil) / 2 + (floor + ceil) % 2) <= a){
+                floor = (floor + ceil) / 2 + (floor + ceil) % 2;
+            } else{
+                ceil = (floor + ceil) / 2;
+            }
+
+        }
+
+        c._mantissa.push_back(floor);
+        a -= b * floor;
+        a.discard_zeros();
+    }
+
+    c.discard_zeros();
+
+
+    return c;
+
+}
