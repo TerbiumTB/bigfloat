@@ -65,6 +65,16 @@ CMAKE_BINARY_DIR = /Users/timofejbulgakov/CLionProjects/bigfloat/cmake-build-deb
 #=============================================================================
 # Targets provided globally by CMake.
 
+# Special rule for the target test
+test:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running tests..."
+	/Applications/CLion.app/Contents/bin/cmake/mac/bin/ctest --force-new-ctest-process $(ARGS)
+.PHONY : test
+
+# Special rule for the target test
+test/fast: test
+.PHONY : test/fast
+
 # Special rule for the target edit_cache
 edit_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
@@ -84,6 +94,51 @@ rebuild_cache:
 # Special rule for the target rebuild_cache
 rebuild_cache/fast: rebuild_cache
 .PHONY : rebuild_cache/fast
+
+# Special rule for the target list_install_components
+list_install_components:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Available install components are: \"Unspecified\""
+.PHONY : list_install_components
+
+# Special rule for the target list_install_components
+list_install_components/fast: list_install_components
+.PHONY : list_install_components/fast
+
+# Special rule for the target install
+install: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
+	/Applications/CLion.app/Contents/bin/cmake/mac/bin/cmake -P cmake_install.cmake
+.PHONY : install
+
+# Special rule for the target install
+install/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
+	/Applications/CLion.app/Contents/bin/cmake/mac/bin/cmake -P cmake_install.cmake
+.PHONY : install/fast
+
+# Special rule for the target install/local
+install/local: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
+	/Applications/CLion.app/Contents/bin/cmake/mac/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+.PHONY : install/local
+
+# Special rule for the target install/local
+install/local/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
+	/Applications/CLion.app/Contents/bin/cmake/mac/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+.PHONY : install/local/fast
+
+# Special rule for the target install/strip
+install/strip: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
+	/Applications/CLion.app/Contents/bin/cmake/mac/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip
+
+# Special rule for the target install/strip
+install/strip/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
+	/Applications/CLion.app/Contents/bin/cmake/mac/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip/fast
 
 # The main all target
 all: cmake_check_build_system
@@ -117,17 +172,17 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named bigfloat
+# Target rules for targets named libbigfloat
 
 # Build rule for target.
-bigfloat: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 bigfloat
-.PHONY : bigfloat
+libbigfloat: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 libbigfloat
+.PHONY : libbigfloat
 
 # fast build rule for target.
-bigfloat/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/bigfloat.dir/build.make CMakeFiles/bigfloat.dir/build
-.PHONY : bigfloat/fast
+libbigfloat/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/libbigfloat.dir/build.make CMakeFiles/libbigfloat.dir/build
+.PHONY : libbigfloat/fast
 
 #=============================================================================
 # Target rules for targets named main
@@ -142,12 +197,77 @@ main/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/build
 .PHONY : main/fast
 
+#=============================================================================
+# Target rules for targets named pi
+
+# Build rule for target.
+pi: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 pi
+.PHONY : pi
+
+# fast build rule for target.
+pi/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/pi.dir/build.make CMakeFiles/pi.dir/build
+.PHONY : pi/fast
+
+#=============================================================================
+# Target rules for targets named gmock
+
+# Build rule for target.
+gmock: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 gmock
+.PHONY : gmock
+
+# fast build rule for target.
+gmock/fast:
+	$(MAKE) $(MAKESILENT) -f _deps/googletest-build/googlemock/CMakeFiles/gmock.dir/build.make _deps/googletest-build/googlemock/CMakeFiles/gmock.dir/build
+.PHONY : gmock/fast
+
+#=============================================================================
+# Target rules for targets named gmock_main
+
+# Build rule for target.
+gmock_main: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 gmock_main
+.PHONY : gmock_main
+
+# fast build rule for target.
+gmock_main/fast:
+	$(MAKE) $(MAKESILENT) -f _deps/googletest-build/googlemock/CMakeFiles/gmock_main.dir/build.make _deps/googletest-build/googlemock/CMakeFiles/gmock_main.dir/build
+.PHONY : gmock_main/fast
+
+#=============================================================================
+# Target rules for targets named gtest
+
+# Build rule for target.
+gtest: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 gtest
+.PHONY : gtest
+
+# fast build rule for target.
+gtest/fast:
+	$(MAKE) $(MAKESILENT) -f _deps/googletest-build/googletest/CMakeFiles/gtest.dir/build.make _deps/googletest-build/googletest/CMakeFiles/gtest.dir/build
+.PHONY : gtest/fast
+
+#=============================================================================
+# Target rules for targets named gtest_main
+
+# Build rule for target.
+gtest_main: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 gtest_main
+.PHONY : gtest_main
+
+# fast build rule for target.
+gtest_main/fast:
+	$(MAKE) $(MAKESILENT) -f _deps/googletest-build/googletest/CMakeFiles/gtest_main.dir/build.make _deps/googletest-build/googletest/CMakeFiles/gtest_main.dir/build
+.PHONY : gtest_main/fast
+
 bigfloat.o: bigfloat.cpp.o
 .PHONY : bigfloat.o
 
 # target to build an object file
 bigfloat.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/bigfloat.dir/build.make CMakeFiles/bigfloat.dir/bigfloat.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/libbigfloat.dir/build.make CMakeFiles/libbigfloat.dir/bigfloat.cpp.o
 .PHONY : bigfloat.cpp.o
 
 bigfloat.i: bigfloat.cpp.i
@@ -155,7 +275,7 @@ bigfloat.i: bigfloat.cpp.i
 
 # target to preprocess a source file
 bigfloat.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/bigfloat.dir/build.make CMakeFiles/bigfloat.dir/bigfloat.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/libbigfloat.dir/build.make CMakeFiles/libbigfloat.dir/bigfloat.cpp.i
 .PHONY : bigfloat.cpp.i
 
 bigfloat.s: bigfloat.cpp.s
@@ -163,7 +283,7 @@ bigfloat.s: bigfloat.cpp.s
 
 # target to generate assembly for a file
 bigfloat.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/bigfloat.dir/build.make CMakeFiles/bigfloat.dir/bigfloat.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/libbigfloat.dir/build.make CMakeFiles/libbigfloat.dir/bigfloat.cpp.s
 .PHONY : bigfloat.cpp.s
 
 main.o: main.cpp.o
@@ -190,6 +310,30 @@ main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main.cpp.s
 .PHONY : main.cpp.s
 
+pi.o: pi.cpp.o
+.PHONY : pi.o
+
+# target to build an object file
+pi.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/pi.dir/build.make CMakeFiles/pi.dir/pi.cpp.o
+.PHONY : pi.cpp.o
+
+pi.i: pi.cpp.i
+.PHONY : pi.i
+
+# target to preprocess a source file
+pi.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/pi.dir/build.make CMakeFiles/pi.dir/pi.cpp.i
+.PHONY : pi.cpp.i
+
+pi.s: pi.cpp.s
+.PHONY : pi.s
+
+# target to generate assembly for a file
+pi.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/pi.dir/build.make CMakeFiles/pi.dir/pi.cpp.s
+.PHONY : pi.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -197,15 +341,28 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... edit_cache"
+	@echo "... install"
+	@echo "... install/local"
+	@echo "... install/strip"
+	@echo "... list_install_components"
 	@echo "... rebuild_cache"
-	@echo "... bigfloat"
+	@echo "... test"
+	@echo "... gmock"
+	@echo "... gmock_main"
+	@echo "... gtest"
+	@echo "... gtest_main"
+	@echo "... libbigfloat"
 	@echo "... main"
+	@echo "... pi"
 	@echo "... bigfloat.o"
 	@echo "... bigfloat.i"
 	@echo "... bigfloat.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
+	@echo "... pi.o"
+	@echo "... pi.i"
+	@echo "... pi.s"
 .PHONY : help
 
 
