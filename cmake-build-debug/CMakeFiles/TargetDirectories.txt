@@ -15,6 +15,14 @@
 /Users/timofejbulgakov/CLionProjects/bigfloat/cmake-build-debug/bigfloat_lib/CMakeFiles/install.dir
 /Users/timofejbulgakov/CLionProjects/bigfloat/cmake-build-debug/bigfloat_lib/CMakeFiles/install/local.dir
 /Users/timofejbulgakov/CLionProjects/bigfloat/cmake-build-debug/bigfloat_lib/CMakeFiles/install/strip.dir
+/Users/timofejbulgakov/CLionProjects/bigfloat/cmake-build-debug/pi_lib/CMakeFiles/pi_lib.dir
+/Users/timofejbulgakov/CLionProjects/bigfloat/cmake-build-debug/pi_lib/CMakeFiles/test.dir
+/Users/timofejbulgakov/CLionProjects/bigfloat/cmake-build-debug/pi_lib/CMakeFiles/edit_cache.dir
+/Users/timofejbulgakov/CLionProjects/bigfloat/cmake-build-debug/pi_lib/CMakeFiles/rebuild_cache.dir
+/Users/timofejbulgakov/CLionProjects/bigfloat/cmake-build-debug/pi_lib/CMakeFiles/list_install_components.dir
+/Users/timofejbulgakov/CLionProjects/bigfloat/cmake-build-debug/pi_lib/CMakeFiles/install.dir
+/Users/timofejbulgakov/CLionProjects/bigfloat/cmake-build-debug/pi_lib/CMakeFiles/install/local.dir
+/Users/timofejbulgakov/CLionProjects/bigfloat/cmake-build-debug/pi_lib/CMakeFiles/install/strip.dir
 /Users/timofejbulgakov/CLionProjects/bigfloat/cmake-build-debug/Tests/CMakeFiles/tests.dir
 /Users/timofejbulgakov/CLionProjects/bigfloat/cmake-build-debug/Tests/CMakeFiles/test.dir
 /Users/timofejbulgakov/CLionProjects/bigfloat/cmake-build-debug/Tests/CMakeFiles/edit_cache.dir

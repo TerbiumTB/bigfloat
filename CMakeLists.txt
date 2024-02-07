@@ -5,10 +5,13 @@ set(CMAKE_CXX_STANDARD 20)
 #include(cmake-build-debug/Core.cmake)
 
 add_executable(main main.cpp)
-add_executable(pi pi.cpp)
+add_executable(pi pi_lib/pi.cpp)
 
 include_directories(bigfloat_lib)
 add_subdirectory(bigfloat_lib)
+
+include_directories(pi_lib)
+add_subdirectory(pi_lib)
 
 
 

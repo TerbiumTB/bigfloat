@@ -1,11 +1,13 @@
 #include "bigfloat.h"
 
+#include <utility>
+#include <iostream>
 //#include <utility>
 
 // static-------------------------------
 lli bigfloat::_precision = 100;
 
-lli & bigfloat::precision() {
+lli &bigfloat::precision() {
     return _precision;
 }
 
@@ -111,33 +113,38 @@ lli bigfloat::lowest() const {
 
 
 //-------------------------------
-std::string bigfloat::to_string() {
+std::string bigfloat::to_string() const{
     std::string number = _signum ? "-" : "";
 
-    auto extra = precision()%CAPACITY;
+    auto extra = precision() % CAPACITY;
+
     for (auto i = 0; i < _mantissa.size(); ++i) {
+
+        if (i == 0) {
+            number += num2string(_mantissa[i]);
+            if (i == _exponent) {
+                number += '.';
+            }
+            continue;
+        }
+
         if (i == _exponent) number += '.';
 
-        if(i >= _exponent && i == _exponent + precision()/CAPACITY - (extra==0)){
-            if(extra != 0){
+
+        if (i >= _exponent && i == _exponent + precision() / CAPACITY - (extra == 0)) {
+            if (extra != 0) {
                 number += fnum2string(_mantissa[i]).substr(0, extra);
-            }
-            else{
+            } else {
                 number += fnum2string(_mantissa[i]);
             }
             break;
         }
 
-        if (i == 0) {
-            number += num2string(_mantissa[i]);
-        }
-        else{
-            number += fnum2string(_mantissa[i]);
-        }
+        number += fnum2string(_mantissa[i]);
     }
 
 
-    if (_mantissa.size() == _exponent){
+    if (_mantissa.size() == _exponent) {
         return number + ".0";
     }
 
@@ -148,8 +155,7 @@ std::string bigfloat::to_string() {
     return number;
 }
 
-std::ostream& operator<<(std::ostream& os, bigfloat number)
-{
+std::ostream &operator<<(std::ostream &os, bigfloat number) {
     return os << number.to_string();
 }
 //-------------------------------
@@ -159,7 +165,7 @@ void bigfloat::discard_zeros() {
     while (_mantissa.size() != _exponent && _mantissa.back() == 0)
         _mantissa.pop_back();
 
-    while (_exponent != 1 && _mantissa.front() == 0) {
+    while (_exponent > 1 && _mantissa.front() == 0) {
         _mantissa.erase(_mantissa.begin());
         --_exponent;
     }
@@ -243,7 +249,7 @@ bool operator==(const bigfloat &x, lli y) {
  * x[0] = 2, x[1] = 1, x[-1] = 3, x[123] = 0
  * */
 digit_t bigfloat::operator[](lli index) const {
-    if (index < _exponent && index <= greatest()) return _mantissa[_exponent - index - 1];
+    if (lowest() <= index && index <= greatest()) return _mantissa[_exponent - index - 1];
     return 0;
 }
 
@@ -471,9 +477,8 @@ bool bigfloat::valuable(lli index) {
     return index >= 0 or (index >= border());
 }
 
-lli bigfloat::border(){
-//    return (bigfloat_lib::precision()/CAPACITY) + ((bigfloat_lib::precision()%CAPACITY)!=0);
-    return -(bigfloat::precision() / CAPACITY + ((bigfloat::precision()%CAPACITY)!=0));
+lli bigfloat::border() {
+    return -(bigfloat::precision() / CAPACITY + ((bigfloat::precision() % CAPACITY) != 0));
 }
 //-------------------------------
 
@@ -494,7 +499,7 @@ bigfloat &bigfloat::operator/=(lli b) {
     return *this = *this / b;
 }
 
-bigfloat operator/(bigfloat a, bigfloat b){
+bigfloat operator/(bigfloat a, bigfloat b) {
     if (b == 0) throw std::overflow_error("division by 0");
 
     bigfloat c{};
@@ -502,35 +507,51 @@ bigfloat operator/(bigfloat a, bigfloat b){
     c._signum = (a._signum != b._signum);
     a._signum = b._signum = false;
 
+
+    while (a._mantissa[0] == 0 && b._mantissa[0] == 0) {
+        a._mantissa.erase(a._mantissa.begin());
+        b._mantissa.erase(b._mantissa.begin());
+    }
+
+    if(a._mantissa[0] == 0){
+        c._mantissa.push_back(0);
+        while (a._mantissa[0] == 0) {
+            a._mantissa.erase(a._mantissa.begin());
+            c._mantissa.push_back(0);
+        }
+        c._exponent = 1;
+    } else if (b._mantissa[0]==0){
+        while (b._mantissa[0] == 0) {
+            b._mantissa.erase(b._mantissa.begin());
+            c._exponent++;
+        }
+        c._exponent += a._exponent;
+    } else{
+        c._exponent = a._exponent - b._exponent + 1;
+    }
+
     if (a < b) c._mantissa.insert(c._mantissa.end(), a._exponent - b._exponent + 1, 0);
-
-    c._exponent = a._exponent - b._exponent + 1;
-
-
-    if (b._mantissa[0] == 0) b._mantissa.erase(b._mantissa.begin());
-
-    if (a._mantissa[0] == 0) a._mantissa.erase(a._mantissa.begin());
 
     a._exponent = b._exponent;
 
-    while(c.lowest() >= c.border() && a != 0){
+    while (c.lowest() >= c.border() && a != 0) {
 
         if (a < b) a._exponent++;
 
         digit_t floor, ceil;
-        if (a._exponent > b._exponent){
+        if (a._exponent > b._exponent) {
             floor = a._mantissa[0] * BASE / (b._mantissa[0] + 1);
-            ceil = (a._mantissa[0]+1) * BASE / (b._mantissa[0]);
-        } else{
+            ceil = ((a._mantissa[0] + 1) * BASE / (b._mantissa[0])) + 1;
+        } else {
             floor = a._mantissa[0] / (b._mantissa[0] + 1);
-            ceil = a._mantissa[0] / (b._mantissa[0]);
+            ceil = (a._mantissa[0] / (b._mantissa[0])) + 1;
         }
 
 
-        while(b * floor <= a && floor < ceil) {
-            if (b*((floor + ceil) / 2 + (floor + ceil) % 2) <= a){
+        while (b * floor <= a && floor < ceil) {
+            if (b * ((floor + ceil) / 2 + (floor + ceil) % 2) <= a) {
                 floor = (floor + ceil) / 2 + (floor + ceil) % 2;
-            } else{
+            } else {
                 ceil = (floor + ceil) / 2;
             }
 
@@ -540,9 +561,14 @@ bigfloat operator/(bigfloat a, bigfloat b){
         a -= b * floor;
         a.discard_zeros();
     }
-
+    if(c._mantissa.size() < c._exponent){
+        c._mantissa.insert(c._mantissa.end(), c._exponent - c._mantissa.size(), 0);
+    }
     c.discard_zeros();
 
     return c;
 }
 
+bigfloat &bigfloat::operator/=(bigfloat b) {
+    return *this = (*this) / std::move(b);
+}

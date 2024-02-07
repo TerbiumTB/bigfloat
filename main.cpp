@@ -15,17 +15,6 @@
 //}
 
 
-bigfloat pi(lli precision=bigfloat::precision()){
-    bigfloat k = 0_bf;
-    auto x = 8*k;
-
-    bigfloat a = x + 1;
-    bigfloat b = x + 4;
-    bigfloat c = x + 5;
-    bigfloat d = x + 6;
-
-
-}
 int main() {
 //    std::vector<int> a = {13213, 213534, 12712, 13819, 91763};
     auto b = bigfloat("10.123451231231243561243541256345612437561243651243675124376512436541263541623412675346125436512431762123456124356");
@@ -46,7 +35,7 @@ int main() {
 //    std::cout <<  d.to_string() << std::endl;
 //b += a;
 
-    std::cout << a << std::endl;
+    std::cout << (2)%9<< std::endl;
 //    std::cout << (c & ~(0b111 << 27)) << std::endl;
     return 0;
 }

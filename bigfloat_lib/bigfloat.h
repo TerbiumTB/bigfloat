@@ -58,7 +58,7 @@ public:
     lli accuracy() const;
 
 
-    std::string to_string();
+    std::string to_string() const;
 
     friend std::ostream& operator<<(std::ostream&, bigfloat);
 
@@ -138,5 +138,4 @@ public:
 bigfloat operator ""_bf(long double);
 
 bigfloat operator ""_bf(unsigned long long);
-
 #endif //VERY_LONG_FLOAT_BIGFLOAT_H

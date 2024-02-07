@@ -44,6 +44,11 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
+  include("/Users/timofejbulgakov/CLionProjects/bigfloat/cmake-build-debug/pi_lib/cmake_install.cmake")
+endif()
+
+if(NOT CMAKE_INSTALL_LOCAL_ONLY)
+  # Include the install script for the subdirectory.
   include("/Users/timofejbulgakov/CLionProjects/bigfloat/cmake-build-debug/Tests/cmake_install.cmake")
 endif()
 
