@@ -5,12 +5,6 @@
 //#include <utility>
 
 // static-------------------------------
-lli bigfloat::_precision = 100;
-
-lli &bigfloat::precision() {
-    return _precision;
-}
-
 digit_t bigfloat::to_digit(char digit) {
     return digit - '0';
 }
@@ -38,7 +32,45 @@ std::string bigfloat::fnum2string(digit_t n) {
 bigfloat::bigfloat() {
     _signum = false;
     _exponent = 0;
-//    _mantissa.push_back(0);
+    _precision = 100;
+}
+
+bigfloat::bigfloat(lli input) {
+    _precision = 100;
+    _exponent = 0;
+
+    _signum = false;
+
+    if (input < 0) {
+        _signum = true;
+        input = -input;
+    }
+
+    while (input > 0) {
+        _mantissa.insert(_mantissa.begin(), input % BASE);
+        input /= BASE;
+
+        _exponent++;
+    }
+}
+
+bigfloat::bigfloat(lli input, lli precision) {
+    _precision = precision;
+    _exponent = 0;
+
+    _signum = false;
+
+    if (input < 0) {
+        _signum = true;
+        input = -input;
+    }
+
+    while (input > 0) {
+        _mantissa.insert(_mantissa.begin(), input % BASE);
+        input /= BASE;
+
+        _exponent++;
+    }
 }
 
 bigfloat::bigfloat(std::string input) {
@@ -81,18 +113,20 @@ bigfloat::bigfloat(std::string input) {
 
     discard_zeros();
 
+    _precision = static_cast<lli>(fmax(100, _mantissa.size() - _exponent));
+
 }
 
-bigfloat operator ""_bf(long double number) {
-    if (number == 0.0)
-        return {};
-    return {std::to_string(number)};
-}
-
+//bigfloat operator ""_bf(long double number) {
+//    if (number == 0.0)
+//        return {};
+//    return {std::to_string(number)};
+//}
+//
 bigfloat operator ""_bf(unsigned long long number) {
     if (number == 0)
         return {};
-    return {std::to_string(number) + '.'};
+    return bigfloat(number);
 }
 //-------------------------------
 
@@ -109,14 +143,52 @@ lli bigfloat::greatest() const {
 lli bigfloat::lowest() const {
     return _exponent - (lli) _mantissa.size();
 }
+
+lli &bigfloat::precision() {
+    return _precision;
+}
+
+lli bigfloat::border() const {
+    return -(_precision / CAPACITY + ((_precision % CAPACITY) != 0));
+}
 //-------------------------------
 
 
 //-------------------------------
-std::string bigfloat::to_string() const{
+std::string bigfloat::to_string() const {
     std::string number = _signum ? "-" : "";
 
-    auto extra = precision() % CAPACITY;
+    for (auto i = 0; i < _mantissa.size(); ++i) {
+
+        if (i == 0) {
+            number += num2string(_mantissa[i]);
+            if (i == _exponent) {
+                number += '.';
+            }
+            continue;
+        }
+
+        if (i == _exponent) number += '.';
+
+        number += fnum2string(_mantissa[i]);
+    }
+
+
+    if (_mantissa.size() == _exponent) {
+        return number + ".0";
+    }
+
+    while (number.back() == '0')
+        number.pop_back();
+
+
+    return number;
+}
+
+std::string bigfloat::to_string(lli precision) const {
+    std::string number = _signum ? "-" : "";
+
+    auto extra = precision % CAPACITY;
 
     for (auto i = 0; i < _mantissa.size(); ++i) {
 
@@ -131,7 +203,7 @@ std::string bigfloat::to_string() const{
         if (i == _exponent) number += '.';
 
 
-        if (i >= _exponent && i == _exponent + precision() / CAPACITY - (extra == 0)) {
+        if (i >= _exponent && i == _exponent + precision / CAPACITY - (extra == 0)) {
             if (extra != 0) {
                 number += fnum2string(_mantissa[i]).substr(0, extra);
             } else {
@@ -155,7 +227,7 @@ std::string bigfloat::to_string() const{
     return number;
 }
 
-std::ostream &operator<<(std::ostream &os, bigfloat number) {
+std::ostream &operator<<(std::ostream &os, const bigfloat &number) {
     return os << number.to_string();
 }
 //-------------------------------
@@ -273,233 +345,216 @@ bigfloat bigfloat::operator-() const {
     return inverse;
 }
 
-bigfloat operator-(bigfloat a, const bigfloat &b) {
+bigfloat operator-(const bigfloat &x, const bigfloat &y) {
 
-    if (b._signum) return a + (-b);
-    else if (a._signum) return -(-a + b);
-    else if (a < b) return -(b - a);
+    auto c(x);
+    c._precision = fmax(x._precision, y._precision);
 
-    for (auto i = (lli) fmin(a.lowest(), b.lowest()); i <= (lli) fmax(a.greatest(), b.greatest()); ++i) {
-        if (a[i] < b[i]) {
-            a[i] += (BASE - b[i]);
-            for (auto j = i + 1; j <= a.greatest(); ++j) {
-                if (a[j] == 0) {
-                    a[j] = BASE - 1;
+    if (y._signum) return x + (-y);
+    else if (x._signum) return -(-x + y);
+    else if (x < y) return -(y - x);
+
+    for (auto i = (lli) fmin(x.lowest(), y.lowest()); i <= (lli) fmax(x.greatest(), y.greatest()); ++i) {
+        if (c[i] < y[i]) {
+            c[i] += (BASE - y[i]);
+            for (auto j = i + 1; j <= x.greatest(); ++j) {
+                if (c[j] == 0) {
+                    c[j] = BASE - 1;
                 } else {
-                    a[j]--;
+                    c[j]--;
                     break;
                 }
             }
         } else {
-            a[i] -= b[i];
+            c[i] -= y[i];
         }
     }
 
-    a.discard_zeros();
+    c.discard_zeros();
 
-    return a;
+    return c;
 }
 
 bigfloat &bigfloat::operator-=(const bigfloat &other) {
     return *this = *this - other;
 }
 
-bigfloat operator-(bigfloat a, lli b) {
-    if (b < 0) return a + (-b);
-    else if (a._signum) return -(-a + b);
-    else if (a < b) return -(b - a);
+bigfloat substract(const bigfloat &a, lli b) {
+    auto c(a);
+
+    if (b < 0) return add(a, -b);
+    else if (a._signum || a < b) return -add(-a, b);
+//    else if (a < b) return -add(-a, b);
 
 
     if (a[0] == 0 || a[0] - b < 0) {
-        a[0] += BASE - b;
+        c[0] += BASE - b;
         for (auto j = 1; j <= a.greatest(); ++j) {
             if (a[j] == 0) {
-                a[j] = BASE - 1;
+                c[j] = BASE - 1;
             } else {
-                a[j]--;
+                c[j]--;
                 break;
             }
         }
     } else {
-        a[0] -= b;
+        c[0] -= b;
     }
 
-    a.discard_zeros();
+    c.discard_zeros();
 
-    return a;
-}
-
-bigfloat operator-(lli a, bigfloat b) {
-    return -(std::move(b) - a);
-}
-
-bigfloat &bigfloat::operator-=(lli b) {
-    return *this = *this - b;
+    return c;
 }
 
 const bigfloat &bigfloat::operator--() {
-    return *this -= 1;
+    *this = substract(*this, 1);
+    return *this;
 }
 
 const bigfloat bigfloat::operator--(int) {
-    *this -= 1;
-    return (*this + 1);
+    *this = substract(*this, 1);
+    return add(*this, 1);
 }
 //-------------------------------
 
 
 //addition-------------------------------
-bigfloat operator+(bigfloat a, const bigfloat &b) {
-    if (a._signum != b._signum) {
-        if (b._signum) return a - (-b);
-        return b - (-a);
+bigfloat operator+(const bigfloat &x, const bigfloat &y) {
+    if (x._signum != y._signum) {
+        if (y._signum) return x - (-y);
+        return y - (-x);
     }
 
+    auto c{x};
+    c._precision = fmax(x._precision, y._precision);
+
     auto carry = 0;
-    for (auto i = (lli) fmin(a.lowest(), b.lowest()); i <= (lli) fmax(a.greatest(), b.greatest()) || carry != 0; ++i) {
-        a[i] += b[i] + carry;
-        if (a[i] >= BASE) {
-            a[i] -= BASE;
+    for (auto i = (lli) fmin(c.lowest(), y.lowest()); i <= (lli) fmax(c.greatest(), y.greatest()) || carry != 0; ++i) {
+        c[i] += y[i] + carry;
+        if (c[i] >= BASE) {
+            c[i] -= BASE;
             carry = 1;
         } else {
             carry = 0;
         }
+
     }
 
-    a.discard_zeros();
+    c.discard_zeros();
 
-    return a;
+    return c;
 }
 
 bigfloat &bigfloat::operator+=(const bigfloat &other) {
     return *this = *this + other;
 }
 
-bigfloat operator+(bigfloat a, lli b) {
-    if (a.sign() * b < 0) {
-        if (b < 0) return a - (-b);
-        return b - (-a);
+bigfloat add(const bigfloat &x, lli n) {
+    auto c{x};
+
+    if (x.sign() * n < 0) {
+        if (n < 0) return substract(x, -n);
+        return -substract(-x, n);
     }
 
-    a[0] += b;
-    if (a[0] >= BASE) {
-        a[0] -= BASE;
-        a[1]++;
+    c[0] += n;
+    if (x[0] >= BASE) {
+        c[0] -= BASE;
+        c[1]++;
     }
 
-    a.discard_zeros();
+    c.discard_zeros();
 
-    return a;
+    return x;
 }
 
-bigfloat operator+(lli a, bigfloat b) {
-    return std::move(b) + a;
-}
-
-bigfloat &bigfloat::operator+=(lli b) {
-    return *this = *this + b;
-}
 
 const bigfloat &bigfloat::operator++() {
-    return *this += 1;
+    *this = add(*this, 1);
+    return *this;
 }
 
 const bigfloat bigfloat::operator++(int) {
-    *this += 1;
-    return (*this - 1);
+    *this = add(*this, 1);
+    return substract(*this, 1);
 }
 //-------------------------------
 
 //multiplication-------------------------------
-bigfloat operator*(bigfloat a, const bigfloat &b) {
-    if (a == 0_bf || b == 0_bf) return 0_bf;
+bigfloat operator*(const bigfloat &x, const bigfloat &y) {
+    if (x == 0_bf || y == 0_bf) return 0_bf;
 
     digit_t carry;
     auto c = 0_bf;
+    c._precision = x._precision + y._precision;
 
-    for (auto i = (lli) fmin(a.lowest(), b.lowest()); i <= a.greatest(); ++i) {
+    for (auto i = (lli) fmin(x.lowest(), y.lowest()); i <= x.greatest(); ++i) {
         carry = 0;
+        for (auto j = (lli) fmin(x.lowest(), y.lowest()); j <= y.greatest() || carry != 0; ++j) {
+            auto m = c[i + j] + x[i] * y[j] + carry;
 
-        for (auto j = (lli) fmin(a.lowest(), b.lowest()); j <= b.greatest() || carry != 0; ++j) {
-            auto x = c[i + j] + a[i] * b[j] + carry;
+            c[i + j] = m % BASE;
 
-            if (bigfloat::valuable(i + j)) c[i + j] = x % BASE;
-
-            carry = x / BASE;
+            carry = m / BASE;
         }
     }
 
     c.discard_zeros();
 
-    c._signum = a._signum != b._signum;
-    c._exponent = (lli) c._mantissa.size() - (lli) fmin(a.accuracy() + b.accuracy(), -bigfloat::border());
+    c._signum = x._signum != y._signum;
+    c._exponent = static_cast<lli>(c._mantissa.size()) + x.lowest() + y.lowest();
 
     return c;
 }
 
-bigfloat &bigfloat::operator*=(const bigfloat &b) {
-    return *this = (*this) * b;
+bigfloat &bigfloat::operator*=(const bigfloat &other) {
+    return *this = (*this) * other;
 }
 
-bigfloat operator*(bigfloat a, lli b) {
-    if (a == 0_bf || b == 0) return 0_bf;
+bigfloat multiply(const bigfloat &x, lli n) {
+    auto c{x};
+    if (x == 0 || n == 0) return 0_bf;
 
-    if (b < 0) {
-        a._signum = !a._signum;
-        b = -b;
+    if (n < 0) {
+        c._signum = !x._signum;
+        n = -n;
     }
     digit_t carry = 0;
 
-    for (auto i = a.lowest(); i <= a.greatest() || carry != 0; ++i) {
-        auto x = (a[i] * b + carry);
-        a[i] = x % BASE;
-        carry = x / BASE;
+    for (auto i = x.lowest(); i <= x.greatest() || carry != 0; ++i) {
+        auto m = (x[i] * n + carry);
+        c[i] = m % BASE;
+        carry = m / BASE;
     }
 
-    a.discard_zeros();
+    c.discard_zeros();
 
-    return a;
-}
-
-bigfloat operator*(lli a, bigfloat b) {
-    return std::move(b) * a;
-}
-
-bigfloat &bigfloat::operator*=(lli b) {
-    return *this = (*this) * b;
-}
-
-lli bigfloat::accuracy() const {
-    return (lli) _mantissa.size() - _exponent;
-}
-
-bool bigfloat::valuable(lli index) {
-    return index >= 0 or (index >= border());
-}
-
-lli bigfloat::border() {
-    return -(bigfloat::precision() / CAPACITY + ((bigfloat::precision() % CAPACITY) != 0));
+    return c;
 }
 //-------------------------------
 
 
 //division-------------------------------
-bigfloat operator/(bigfloat a, lli b) {
-    if (b == 0) throw std::overflow_error("division by 0");
+bigfloat divide(const bigfloat &x, lli n) {
+    if (n == 0) throw std::overflow_error("division by 0");
 
-    for (auto i = a.greatest(); i >= a.lowest() && i >= bigfloat::border(); --i) {
-        a[i - 1] += (a[i] % b) * BASE;
-        a[i] /= b;
+    auto c{x};
+
+    for (auto i = x.greatest(); i >= 0 || i >= x.border(); --i) {
+        c[i - 1] += (c[i] % n) * BASE;
+        c[i] /= n;
     }
+    c[c.lowest()] /= n;
 
-    return a;
+    c.discard_zeros();
+
+    return c;
 }
 
-bigfloat &bigfloat::operator/=(lli b) {
-    return *this = *this / b;
-}
 
-bigfloat operator/(bigfloat a, bigfloat b) {
+bigfloat operator/(const bigfloat &x, const bigfloat &y) {
+    auto a{x}, b{y};
+
     if (b == 0) throw std::overflow_error("division by 0");
 
     bigfloat c{};
@@ -507,26 +562,27 @@ bigfloat operator/(bigfloat a, bigfloat b) {
     c._signum = (a._signum != b._signum);
     a._signum = b._signum = false;
 
+    c.precision() = fmax(a.precision(), b.precision());
 
     while (a._mantissa[0] == 0 && b._mantissa[0] == 0) {
         a._mantissa.erase(a._mantissa.begin());
         b._mantissa.erase(b._mantissa.begin());
     }
 
-    if(a._mantissa[0] == 0){
+    if (a._mantissa[0] == 0) {
         c._mantissa.push_back(0);
         while (a._mantissa[0] == 0) {
             a._mantissa.erase(a._mantissa.begin());
             c._mantissa.push_back(0);
         }
         c._exponent = 1;
-    } else if (b._mantissa[0]==0){
+    } else if (b._mantissa[0] == 0) {
         while (b._mantissa[0] == 0) {
             b._mantissa.erase(b._mantissa.begin());
             c._exponent++;
         }
         c._exponent += a._exponent;
-    } else{
+    } else {
         c._exponent = a._exponent - b._exponent + 1;
     }
 
@@ -534,7 +590,7 @@ bigfloat operator/(bigfloat a, bigfloat b) {
 
     a._exponent = b._exponent;
 
-    while (c.lowest() >= c.border() && a != 0) {
+    while (c.lowest() + c.precision() >= 0 && a != 0) {
 
         if (a < b) a._exponent++;
 
@@ -548,8 +604,8 @@ bigfloat operator/(bigfloat a, bigfloat b) {
         }
 
 
-        while (b * floor <= a && floor < ceil) {
-            if (b * ((floor + ceil) / 2 + (floor + ceil) % 2) <= a) {
+        while (multiply(b, floor) <= a && floor < ceil) {
+            if (multiply(b, ((floor + ceil) / 2 + (floor + ceil) % 2)) <= a) {
                 floor = (floor + ceil) / 2 + (floor + ceil) % 2;
             } else {
                 ceil = (floor + ceil) / 2;
@@ -558,10 +614,10 @@ bigfloat operator/(bigfloat a, bigfloat b) {
         }
 
         c._mantissa.push_back(floor);
-        a -= b * floor;
+        a -= multiply(b, floor);
         a.discard_zeros();
     }
-    if(c._mantissa.size() < c._exponent){
+    if (c._mantissa.size() < c._exponent) {
         c._mantissa.insert(c._mantissa.end(), c._exponent - c._mantissa.size(), 0);
     }
     c.discard_zeros();
@@ -569,6 +625,6 @@ bigfloat operator/(bigfloat a, bigfloat b) {
     return c;
 }
 
-bigfloat &bigfloat::operator/=(bigfloat b) {
-    return *this = (*this) / std::move(b);
+bigfloat &bigfloat::operator/=(const bigfloat &b) {
+    return *this = (*this) / b;
 }

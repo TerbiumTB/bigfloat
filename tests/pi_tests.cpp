@@ -4,18 +4,13 @@
 
 
 TEST(PI, PI100){
-    bigfloat::precision() = 100;
-    bigfloat _pi=PI;
-//    std::cout<<PI<<std::endl;
-    EXPECT_EQ(1, pi());
+    EXPECT_EQ(PI.to_string(100), pi(100).to_string(100));
 }
 
 TEST(PI, PI500){
-    bigfloat::precision() = 500;
-    EXPECT_EQ(PI.to_string().substr(0,500), pi());
+    EXPECT_EQ(PI.to_string(500), pi(500).to_string(500));
 }
 
 TEST(PI, PI1000){
-    bigfloat::precision() = 1000;
-    EXPECT_EQ(PI.to_string().substr(0,1000), pi());
+    EXPECT_EQ(PI.to_string(1000), pi(1000).to_string(1000));
 }

@@ -1,15 +1,12 @@
-
-#include <iostream>
 #include "bigfloat.h"
+#include <iostream>
 
 
-bigfloat pi(lli precision = bigfloat::precision()) {
+bigfloat pi(lli precision) {
     precision += 10;
-    auto previous_precision = bigfloat::precision();
-    bigfloat::precision() = precision;
-    bigfloat pi = 0_bf;
+    bigfloat pi = bigfloat(0, precision);
 
-    bigfloat power = 1_bf;
+    bigfloat power = bigfloat(1, precision);
 
     lli a = 1;
     lli b = 4;
@@ -17,48 +14,22 @@ bigfloat pi(lli precision = bigfloat::precision()) {
     lli d = 6;
 
     for (auto k = 0; k < precision; ++k) {
-        pi += (power * (4_bf / a - 2_bf / b - 1_bf / c - 1_bf / d));
-        power /= 16;
+
+        auto s = divide(bigfloat(4, precision), a) - divide(bigfloat(2, precision), b) - divide(bigfloat(1, precision), c) - divide(bigfloat(1, precision), d);
+//        std::cout << k << ':' << s*power << std::endl;
+        s *= power;
+        std::cout << k << ':' << s << std::endl;
+        pi += s;
+        power = divide(power, 16);
         a += 8;
         b += 8;
         c += 8;
         d += 8;
     }
 
-    bigfloat::precision() -= 10;
-//    std::cout << pi << std::endl;
-    bigfloat::precision() = previous_precision;
+
     return pi;
 }
-
-bigfloat pi() {
-    bigfloat::precision() += 10;
-    bigfloat pi = 0_bf;
-
-    bigfloat power = 1_bf;
-
-    lli a = 1;
-    lli b = 4;
-    lli c = 5;
-    lli d = 6;
-
-    for (auto k = 0; k < bigfloat::precision(); ++k) {
-        pi += (power * (4_bf / a - 2_bf / b - 1_bf / c - 1_bf / d));
-        power /= 16;
-        a += 8;
-        b += 8;
-        c += 8;
-        d += 8;
-    }
-
-    bigfloat::precision() -= 10;
-    std::cout << pi << std::endl;
-    return pi;
-}
-
-int main() {
-    auto a = bigfloat("0.1");
-
-    std::cout << pi(1000) << std::endl;
-    return 0;
-}
+//000000000000000000000000000026534859014499243700227047150865200761266082893133268015680370973358714858723951244087610495490964864682774772369969807804629472448190003440460227324138031690381467342376708984375
+//00000000000000000000000000002653485901449924370022704715086520076126608289313326801568037097335871485872395124
+//000000000000000000000000000026534859014499243700227047150865200761266082893133268015680370973358714858723951244087610495490964864682774772369969807804629472448190003440460227324138031690381467342376708984375
