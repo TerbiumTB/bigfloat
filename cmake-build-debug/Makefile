@@ -172,6 +172,7 @@ depend:
 .PHONY : depend
 
 #=============================================================================
+<<<<<<< Updated upstream
 # Target rules for targets named libbigfloat
 
 # Build rule for target.
@@ -183,6 +184,19 @@ libbigfloat: cmake_check_build_system
 libbigfloat/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/libbigfloat.dir/build.make CMakeFiles/libbigfloat.dir/build
 .PHONY : libbigfloat/fast
+=======
+# Target rules for targets named bigfloat
+
+# Build rule for target.
+bigfloat: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 bigfloat
+.PHONY : bigfloat
+
+# fast build rule for target.
+bigfloat/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/bigfloat.dir/build.make CMakeFiles/bigfloat.dir/build
+.PHONY : bigfloat/fast
+>>>>>>> Stashed changes
 
 #=============================================================================
 # Target rules for targets named main
@@ -196,6 +210,7 @@ main: cmake_check_build_system
 main/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/build
 .PHONY : main/fast
+<<<<<<< Updated upstream
 
 #=============================================================================
 # Target rules for targets named pi
@@ -261,13 +276,19 @@ gtest_main: cmake_check_build_system
 gtest_main/fast:
 	$(MAKE) $(MAKESILENT) -f _deps/googletest-build/googletest/CMakeFiles/gtest_main.dir/build.make _deps/googletest-build/googletest/CMakeFiles/gtest_main.dir/build
 .PHONY : gtest_main/fast
+=======
+>>>>>>> Stashed changes
 
 bigfloat.o: bigfloat.cpp.o
 .PHONY : bigfloat.o
 
 # target to build an object file
 bigfloat.cpp.o:
+<<<<<<< Updated upstream
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/libbigfloat.dir/build.make CMakeFiles/libbigfloat.dir/bigfloat.cpp.o
+=======
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/bigfloat.dir/build.make CMakeFiles/bigfloat.dir/bigfloat.cpp.o
+>>>>>>> Stashed changes
 .PHONY : bigfloat.cpp.o
 
 bigfloat.i: bigfloat.cpp.i
@@ -275,7 +296,11 @@ bigfloat.i: bigfloat.cpp.i
 
 # target to preprocess a source file
 bigfloat.cpp.i:
+<<<<<<< Updated upstream
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/libbigfloat.dir/build.make CMakeFiles/libbigfloat.dir/bigfloat.cpp.i
+=======
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/bigfloat.dir/build.make CMakeFiles/bigfloat.dir/bigfloat.cpp.i
+>>>>>>> Stashed changes
 .PHONY : bigfloat.cpp.i
 
 bigfloat.s: bigfloat.cpp.s
@@ -283,7 +308,11 @@ bigfloat.s: bigfloat.cpp.s
 
 # target to generate assembly for a file
 bigfloat.cpp.s:
+<<<<<<< Updated upstream
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/libbigfloat.dir/build.make CMakeFiles/libbigfloat.dir/bigfloat.cpp.s
+=======
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/bigfloat.dir/build.make CMakeFiles/bigfloat.dir/bigfloat.cpp.s
+>>>>>>> Stashed changes
 .PHONY : bigfloat.cpp.s
 
 main.o: main.cpp.o
@@ -346,6 +375,7 @@ help:
 	@echo "... install/strip"
 	@echo "... list_install_components"
 	@echo "... rebuild_cache"
+<<<<<<< Updated upstream
 	@echo "... test"
 	@echo "... gmock"
 	@echo "... gmock_main"
@@ -354,6 +384,10 @@ help:
 	@echo "... libbigfloat"
 	@echo "... main"
 	@echo "... pi"
+=======
+	@echo "... bigfloat"
+	@echo "... main"
+>>>>>>> Stashed changes
 	@echo "... bigfloat.o"
 	@echo "... bigfloat.i"
 	@echo "... bigfloat.s"

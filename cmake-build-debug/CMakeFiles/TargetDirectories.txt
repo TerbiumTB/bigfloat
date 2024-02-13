@@ -1,6 +1,11 @@
+<<<<<<< Updated upstream
 /Users/timofejbulgakov/CLionProjects/bigfloat/cmake-build-debug/CMakeFiles/main.dir
 /Users/timofejbulgakov/CLionProjects/bigfloat/cmake-build-debug/CMakeFiles/pi.dir
 /Users/timofejbulgakov/CLionProjects/bigfloat/cmake-build-debug/CMakeFiles/test.dir
+=======
+/Users/timofejbulgakov/CLionProjects/bigfloat/cmake-build-debug/CMakeFiles/bigfloat.dir
+/Users/timofejbulgakov/CLionProjects/bigfloat/cmake-build-debug/CMakeFiles/main.dir
+>>>>>>> Stashed changes
 /Users/timofejbulgakov/CLionProjects/bigfloat/cmake-build-debug/CMakeFiles/edit_cache.dir
 /Users/timofejbulgakov/CLionProjects/bigfloat/cmake-build-debug/CMakeFiles/rebuild_cache.dir
 /Users/timofejbulgakov/CLionProjects/bigfloat/cmake-build-debug/CMakeFiles/list_install_components.dir

@@ -43,5 +43,10 @@ set(CMAKE_MAKEFILE_PRODUCTS
 
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
+<<<<<<< Updated upstream:cmake-build-debug/_deps/googletest-subbuild/CMakeFiles/Makefile.cmake
   "CMakeFiles/googletest-populate.dir/DependInfo.cmake"
+=======
+  "CMakeFiles/bigfloat.dir/DependInfo.cmake"
+  "CMakeFiles/main.dir/DependInfo.cmake"
+>>>>>>> Stashed changes:cmake-build-debug/CMakeFiles/Makefile.cmake
   )

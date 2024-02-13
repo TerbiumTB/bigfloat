@@ -7,7 +7,7 @@
 
 //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 git hub token
 
-
+using namespace Bigfloat;
 //bigfloat_lib operator ""_bf(long double number) {
 //    return {std::to_string(number)};
 //}
@@ -38,11 +38,18 @@ auto c = divide(a, 6);
 //b += a;
 
     std::cout << 1_bf - c << std::endl;
+=======
+    auto a = bigfloat("12.01");
+    auto b = bigfloat("1.9");
+    auto c = b - a;
+    std::cout << a.to_string() << std::endl;
+    std::cout << b.to_string() << std::endl;
+    std::cout << c.to_string() << std::endl;
+    std::cout << a.to_string() << std::endl;
+    std::cout << b.to_string() << std::endl;
+>>>>>>> Stashed changes
 //    std::cout << (c & ~(0b111 << 27)) << std::endl;
     return 0;
 }
 
 
-
-000000000000000000000000000000000001373472165679029162787988214674336011047377310634846836222717584565403752
-000000000000000000000000000000000001373472165679029162787988214674336011047377310634846836222717584
