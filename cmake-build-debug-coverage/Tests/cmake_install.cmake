@@ -1,4 +1,4 @@
-# Install script for directory: /Users/timofejbulgakov/CLionProjects/bigfloat/Tests
+# Install script for directory: /Users/timofeybulgakov/CLionProjects/HSEhomework/very_long_float/Tests
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -39,6 +39,6 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/Users/timofejbulgakov/CLionProjects/bigfloat/cmake-build-debug-coverage/Tests/lib/cmake_install.cmake")
+  include("/Users/timofeybulgakov/CLionProjects/HSEhomework/very_long_float/cmake-build-debug-coverage/Tests/lib/cmake_install.cmake")
 endif()
 

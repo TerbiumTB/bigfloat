@@ -1,6 +1,7 @@
 #include "gtest/gtest.h"
 #include "bigfloat.h"
 #include "pi.h"
+#include "time.h"
 
 
 TEST(PI, PI100){
@@ -13,4 +14,12 @@ TEST(PI, PI500){
 
 TEST(PI, PI1000){
     EXPECT_EQ(PI.to_string(1000), pi(1000).to_string(1000));
+}
+
+TEST(PI_TIME, PI1000){
+    clock_t start, finish;
+    start = clock();
+    auto _pi = pi(960);
+    finish = clock();
+    EXPECT_GE(1, static_cast<double>(finish - start)/CLOCKS_PER_SEC);
 }

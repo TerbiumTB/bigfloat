@@ -2,6 +2,7 @@
 
 #include <utility>
 #include <iostream>
+#include <cmath>
 
 namespace Bigfloat {
 // static-------------------------------
@@ -31,8 +32,9 @@ namespace Bigfloat {
 //constructors-------------------------------
     bigfloat::bigfloat() {
         _signum = false;
-        _exponent = 0;
+        _exponent = 1;
         _precision = 100;
+        _mantissa.push_back(0);
     }
 
     bigfloat::bigfloat(lli input) {
@@ -246,6 +248,8 @@ namespace Bigfloat {
 
         if (y._signum != x._signum) return x._signum <=> y._signum;
 
+        if (x._signum) return -y <=> -x;
+
         if (y._exponent != x._exponent) return x._exponent <=> y._exponent;
 
         for (lli index = x._exponent - 1; index >= x._exponent - (lli) x._mantissa.size(); --index)
@@ -260,14 +264,14 @@ namespace Bigfloat {
 
         if (y.sign() * x < 0) return x <=> y.sign();
 
-        x = abs(x);
+        if (x < 0) return (-y <=> -x);
 
         if (y.greatest() != 0) return 0 <=> y.greatest();
 
         if (y[0] != (digit_t) x) return (digit_t) x <=> y[0];
 
         for (auto i = -1; i >= y.lowest(); --i)
-            if (y[i]) return 0 <=> y.sign();
+            if (y[i]) return 0 <=> y[i];
 
 
         return 0 <=> 0;
@@ -278,14 +282,15 @@ namespace Bigfloat {
 
         if (x.sign() * y < 0) return x.sign() <=> y;
 
-        y = abs(y);
+//        y = abs(y);
+        if (y < 0) return -y <=> -x;
 
         if (x.greatest() != 0) return x.greatest() <=> 0;
 
         if (x[0] != (digit_t) y) return x[0] <=> (digit_t) y;
 
         for (auto i = -1; i >= x.lowest(); --i)
-            if (x[i]) return x.sign() <=> y;
+            if (x[i]) return x[i] <=> 0;
 
 
         return 0 <=> 0;
@@ -446,13 +451,14 @@ namespace Bigfloat {
     }
 
     bigfloat add(const bigfloat &x, lli n) {
-        auto c{x};
+
 
         if (x.sign() * n < 0) {
             if (n < 0) return substract(x, -n);
             return -substract(-x, n);
         }
 
+        auto c{x};
         c[0] += n;
         if (x[0] >= BASE) {
             c[0] -= BASE;

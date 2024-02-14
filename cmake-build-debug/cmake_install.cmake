@@ -1,4 +1,4 @@
-# Install script for directory: /Users/timofejbulgakov/CLionProjects/bigfloat
+# Install script for directory: /Users/timofeybulgakov/CLionProjects/HSEhomework/very_long_float
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -39,17 +39,17 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/Users/timofejbulgakov/CLionProjects/bigfloat/cmake-build-debug/bigfloat_lib/cmake_install.cmake")
+  include("/Users/timofeybulgakov/CLionProjects/HSEhomework/very_long_float/cmake-build-debug/bigfloat_lib/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/Users/timofejbulgakov/CLionProjects/bigfloat/cmake-build-debug/pi_lib/cmake_install.cmake")
+  include("/Users/timofeybulgakov/CLionProjects/HSEhomework/very_long_float/cmake-build-debug/pi_lib/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/Users/timofejbulgakov/CLionProjects/bigfloat/cmake-build-debug/Tests/cmake_install.cmake")
+  include("/Users/timofeybulgakov/CLionProjects/HSEhomework/very_long_float/cmake-build-debug/Tests/cmake_install.cmake")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT)
@@ -60,5 +60,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/Users/timofejbulgakov/CLionProjects/bigfloat/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/Users/timofeybulgakov/CLionProjects/HSEhomework/very_long_float/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

@@ -1,4 +1,4 @@
-# Install script for directory: /Users/timofejbulgakov/CLionProjects/bigfloat/bigfloat_lib
+# Install script for directory: /Users/timofeybulgakov/CLionProjects/HSEhomework/very_long_float/bigfloat_lib
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
