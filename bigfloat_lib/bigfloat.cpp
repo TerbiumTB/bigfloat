@@ -3,6 +3,7 @@
 #include <utility>
 #include <iostream>
 #include <cmath>
+#include <compare>
 
 namespace Bigfloat {
 // static-------------------------------
@@ -164,9 +165,6 @@ namespace Bigfloat {
 
             if (i == 0) {
                 number += num2string(_mantissa[i]);
-                if (i == _exponent) {
-                    number += '.';
-                }
                 continue;
             }
 
@@ -196,9 +194,6 @@ namespace Bigfloat {
 
             if (i == 0) {
                 number += num2string(_mantissa[i]);
-                if (i == _exponent) {
-                    number += '.';
-                }
                 continue;
             }
 
@@ -379,41 +374,13 @@ namespace Bigfloat {
         return *this = *this - other;
     }
 
-    bigfloat substract(const bigfloat &a, lli b) {
-
-
-        if (b < 0) return add(a, -b);
-        else if (a._signum || a < b) return -add(-a, b);
-//    else if (a < b) return -add(-a, b);
-        auto c(a);
-
-        if (c[0] == 0 || c[0] - b < 0) {
-            c[0] += BASE - b;
-            for (auto j = 1; j <= c.greatest(); ++j) {
-                if (c[j] == 0) {
-                    c[j] = BASE - 1;
-                } else {
-                    c[j]--;
-                    break;
-                }
-            }
-        } else {
-            c[0] -= b;
-        }
-
-        c.discard_zeros();
-
-        return c;
-    }
-
     const bigfloat &bigfloat::operator--() {
-        *this = substract(*this, 1);
-        return *this;
+        return *this = *this - 1_bf;
     }
 
     const bigfloat bigfloat::operator--(int) {
-        *this = substract(*this, 1);
-        return add(*this, 1);
+        *this -= 1_bf;
+        return *this + 1_bf;
     }
 //-------------------------------
 
@@ -450,35 +417,13 @@ namespace Bigfloat {
         return *this = *this + other;
     }
 
-    bigfloat add(const bigfloat &x, lli n) {
-
-
-        if (x.sign() * n < 0) {
-            if (n < 0) return substract(x, -n);
-            return -substract(-x, n);
-        }
-
-        auto c{x};
-        c[0] += n;
-        if (x[0] >= BASE) {
-            c[0] -= BASE;
-            c[1]++;
-        }
-
-        c.discard_zeros();
-
-        return c;
-    }
-
-
     const bigfloat &bigfloat::operator++() {
-        *this = add(*this, 1);
-        return *this;
+        return *this = *this + 1_bf;
     }
 
     const bigfloat bigfloat::operator++(int) {
-        *this = add(*this, 1);
-        return substract(*this, 1);
+        *this += 1_bf;
+        return *this - 1_bf;
     }
 //-------------------------------
 
@@ -580,7 +525,6 @@ namespace Bigfloat {
         }
 
         if (a._mantissa[0] == 0) {
-            c._mantissa.push_back(0);
             while (a._mantissa[0] == 0) {
                 a._mantissa.erase(a._mantissa.begin());
                 c._mantissa.push_back(0);
@@ -593,6 +537,7 @@ namespace Bigfloat {
             }
             c._exponent += a._exponent;
         } else {
+            c._mantissa.pop_back();
             c._exponent = a._exponent - b._exponent + 1;
         }
 

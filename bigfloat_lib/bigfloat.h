@@ -96,11 +96,6 @@ namespace Bigfloat {
 
         const bigfloat operator++(int);
 
-
-        friend bigfloat substract(const bigfloat &, lli);
-
-        friend bigfloat add(const bigfloat &, lli);
-
         friend bigfloat multiply(const bigfloat &, lli);
 
         friend bigfloat divide(const bigfloat &, lli);

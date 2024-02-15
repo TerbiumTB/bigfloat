@@ -47,15 +47,13 @@ TEST(ARITMETHICS, MUL3){
 
 TEST(ARITMETHICS, DIV1){
     bigfloat a{"0.00011111123123123123123112312312"};
-    bigfloat b{"-1231242456.122676881236123415236152436512"};
-//    b++;
-    EXPECT_EQ("-0.000000000000090243177270814059461494913521215615611214938769", (a/b).to_string(60));
-
+    bigfloat b{"-1234546545.17281728112351672486512461246541217239712"};
+    EXPECT_EQ("-0.000000000000090001654182813650058556748567215865137385378392525364652150885407347620173892648513787717923835486164857468446454", (a/b).to_string(126));
 }
 
 TEST(ARITMETHICS, DIV2){
-    bigfloat a = -9_bf;
-    a--;
+    bigfloat a = -11_bf;
+    a++;
     bigfloat b{"-0.0000000000000001"};
     EXPECT_EQ("100000000000000000.0", (a/b).to_string(30));
 }
@@ -66,17 +64,23 @@ TEST(ARITMETHICS, DIV3){
     EXPECT_THROW(a/b, std::overflow_error);
 }
 
-//TEST(ARITMETHICS, INT1){
-//    bigfloat a = bigfloat();
-//    bigfloat b = bigfloat(-10, 100);
-//    EXPECT_EQ("3.6666666666", (add(divide(b, 3), 7) - a).to_string(10));
-//}
+TEST(ARITMETHICS, DIV4){
+    bigfloat a{"0.000001243124313549874659343678"};
+    bigfloat b{"-0.15245234786516435987238653275643"};
+    EXPECT_EQ("-0.000008154182805038523365862663282692843123202454510689500868324932938379182406416820315243165800766052895738683490438230713336492", (a/b).to_string(129));
+}
 
-//TEST(ARITMETHICS, INT2){
-//    bigfloat a = bigfloat();
-//    bigfloat b = 1000_bf;
-//    EXPECT_EQ("0.0", (add(divide(b, 3), 7) - a).to_string());
-//}
+TEST(ARITMETHICS, INT1){
+    bigfloat a = bigfloat();
+    bigfloat b = bigfloat(-9, 100);
+    b--;
+    EXPECT_EQ("-3.3333333333", (divide(b, 3) - a).to_string(10));
+}
+
+TEST(ARITMETHICS, INT2){
+    bigfloat b = 112.1234_bf;
+    EXPECT_EQ("-784.8638", multiply(b,-7).to_string());
+}
 
 TEST(ARITMETHICS, COM1){
     bigfloat a{"1.999999999"};
@@ -88,4 +92,20 @@ TEST(ARITMETHICS, COM2){
     bigfloat a{"0.999999999"};
     bigfloat b{"10000000000000000000.999999999"};
     EXPECT_EQ(1, (a < 1) && (a >= 0) && (b > 10000000));
+}
+
+TEST(ARITMETHICS, COM3){
+    bigfloat a{"987126312.12435124365142"};
+    bigfloat b{"987126312.124351243651423"};
+    bigfloat c{"987126312.124351243651427"};
+    bigfloat d{"987126312.124351243651427"};
+    EXPECT_EQ(1, (a != b) && (b < c) && (d == c));
+}
+
+TEST(ARITMETHICS, COM4){
+    bigfloat a{"987126312.12435124365142"};
+    bigfloat b{"987126312.124351243651423"};
+    bigfloat c{"987126312.124351243651427"};
+    bigfloat d{"987126312.124351243651427"};
+    EXPECT_EQ(1, (a != b) && (b < c) && (d == c));
 }

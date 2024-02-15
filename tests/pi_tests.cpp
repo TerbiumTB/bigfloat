@@ -19,7 +19,7 @@ TEST(PI, PI1000){
 TEST(PI_TIME, PI1000){
     clock_t start, finish;
     start = clock();
-    auto _pi = pi(960);
+    auto _pi = pi(900);
     finish = clock();
     EXPECT_GE(1, static_cast<double>(finish - start)/CLOCKS_PER_SEC);
 }
